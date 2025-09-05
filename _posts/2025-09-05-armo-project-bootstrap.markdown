@@ -8,8 +8,6 @@ canonical: "https://jenalab.github.io/armo-project-bootstrap"
 author: "Jerome Na"
 ---
 
-# Armo 웹사이트 개발기 0단계: 프로젝트 부트스트랩
-
 Armo 웹사이트는 단순히 상품을 판매하는 곳이 아니라, **작가의 작품을 스토리텔링으로 전시하고 굿즈와 패키지로 연결하는 웹 갤러리 플랫폼**을 목표로 한다.  
 이번 글에서는 그 시작점인 **프로젝트 부트스트랩(bootstrap)** 과정을 정리한다.
 
