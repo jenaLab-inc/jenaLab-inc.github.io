@@ -1,12 +1,4 @@
----
-layout: post
-title:  "Armo에 적합한 웹 아키텍처 설계기"
-date:   2025-09-05 14:34:25
-categories: feature
-tags: featured
-image: /assets/article_images/2025-09-05-armo-architecture/night-track.JPG
-image2: /assets/article_images/2025-09-05-armo-architecture/night-track-mobile.JPG
----
+
 #Armo에 적합한 웹 아키텍처 설계기
 
 > 작품을 럭셔리하게 전시하고, 스토리텔링으로 굿즈와 연결하는 Armo 웹사이트의 기술적 기반
