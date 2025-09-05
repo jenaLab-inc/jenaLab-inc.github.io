@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-# About 제나랩 (Jenalab)
+# 제나랩 (Jenalab)
 
 ## 🌱 우리의 비전
 “**기록(Record), 성장(Grow), 공유(Share)** — 나를 찾아가는 창작 여정” 
