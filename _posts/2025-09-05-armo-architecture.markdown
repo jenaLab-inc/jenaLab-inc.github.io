@@ -2,7 +2,7 @@
 layout: post
 title:  "Armo에 적합한 웹 아키텍처 설계기"
 date:   2025-09-05 14:34:25
-categories: armo architecture
+categories: feature
 tags: featured
 image: /assets/article_images/2025-09-05-armo-architecture/night-track.JPG
 image2: /assets/article_images/2025-09-05-armo-architecture/night-track-mobile.JPG
