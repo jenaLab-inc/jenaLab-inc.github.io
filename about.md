@@ -4,14 +4,32 @@ title: About
 permalink: /about/
 ---
 
-A medium inspired Jekyll blog theme. The basic idea came from the Ghost theme 
-[Readium 2.0](http://www.svenread.com/readium-ghost-theme/). I use mediator on my own blog [The Base](blog.base68.com).
+# About 제나랩 (Jenalab)
 
-You can **download** the theme here:
-[https://github.com/dirkfabisch/mediator](https://github.com/dirkfabisch/mediator) 
+## 🌱 우리의 비전
+“**기록(Record), 성장(Grow), 공유(Share)** — 나를 찾아가는 창작 여정” 
 
-You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](http://jekyllrb.com/)
+제나랩은 창작자가 자신의 과정을 기록하고, 배움을 통해 성장하며, 결과물을 공유할 수 있는 **창작 플랫폼**을 지향합니다.
 
-You can find the source code for the Jekyll new theme at: [github.com/jglovier/jekyll-new](https://github.com/jglovier/jekyll-new)
+또한 예술 작품을 단순한 결과물이 아닌 **창작자의 여정과 가치를 담은 예술적인 경험**으로 함께합니다.
+기술과 예술, 사업을 연결해, **고급스럽고 전문적인 창작 생태계**를 만들어가는 것이 우리의 목표 비전입니다.
 
-You can find the source code for Jekyll at [github.com/jekyll/jekyll](https://github.com/jekyll/jekyll)
+---
+
+## 📖 우리가 하는 일
+- **교육** : 코딩과 그림을 배우고 성장하는 예술적인 콘텐츠와 클래스 운영  
+- **플랫폼** : 글쓰기·일상 기록·전시를 연결하는 서비스 개발  
+- **유통** : 전자책과 굿즈 제작, 온라인 스토어 운영  
+<!-- - **솔루션** : 창작자와 기업을 위한 프로젝트 관리 및 교육 관리 시스템   -->
+
+---
+
+## 🎯 우리의 차별점
+- 창작 여정을 처음부터 끝까지 지원하는 **통합 생태계**  
+- 교육·구독·굿즈·B2B 등 **다각화된 수익 구조**  
+<!-- - MZ세대 맞춤형 **커뮤니티 기반 학습 경험**   -->
+
+---
+
+## ✨ 우리의 목표
+제나랩은 **모든 창작자의 여정을 함께하는 파트너**로 성장합니다.
