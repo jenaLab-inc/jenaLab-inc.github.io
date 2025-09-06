@@ -42,6 +42,7 @@ armo/
 | workspace 관리 | 설정 단순, 자동 링크 | berry 이후 복잡해짐 |
 | node_modules   | 링크 기반 구조 | 전통적 구조 |
 
+
 Armo 프로젝트는 **효율성과 확장성** 때문에 `pnpm`을 선택했다.
 
 ---
@@ -76,7 +77,6 @@ Armo 프로젝트는 **효율성과 확장성** 때문에 `pnpm`을 선택했다
 ## 4. pnpm Workspaces 설정
 
 📌 루트 pnpm-workspace.yaml
-
 ```yaml
 packages:
   - "web"
@@ -86,7 +86,6 @@ packages:
 ```
 
 📌 루트 package.json
-
 ```json
 {
   "name": "armo",
@@ -103,7 +102,6 @@ packages:
 ```
 
 📌 shared/package.json
-
 ```json
 {
   "name": "@armo/shared",
@@ -130,14 +128,12 @@ packages:
 ## 5. 내부 패키지 설치 (오류와 해결)
 
 처음에 web 폴더에서 이렇게 실행했다:
-
 ```bash
 cd web
 pnpm add @armo/shared
 ```
 
-다음과 같은 오류가 발생했다다:
-
+다음과 같은 오류가 발생했다:
 ```bash
 ERR_PNPM_FETCH_404
 ```
@@ -150,7 +146,6 @@ ERR_PNPM_FETCH_404
 1) pnpm-workspace.yaml 확인
 
 경로가 shared/* 가 아니라 shared로 정확히 잡혀 있어야 한다.
-
 ```yaml
 packages:
   - "web"
@@ -162,7 +157,6 @@ packages:
 2) --workspace 옵션 사용
 
 web 폴더에서 실행할 때 이렇게 입력한다:
-
 ```bash
 pnpm add @armo/shared --workspace
 ```
@@ -170,13 +164,11 @@ pnpm add @armo/shared --workspace
 3) 설치 후 확인
 
 루트에서:
-
 ```bash
 pnpm install
 ```
 
 그리고 web/package.json에는 이렇게 기록된다:
-
 ```json
 "dependencies": {
   "@armo/shared": "workspace:*"
@@ -187,12 +179,10 @@ pnpm install
 ## 6. 최종 확인
 
 - pnpm dev 로 web/api 동시에 실행 가능
-
 ![실행 이미지]({{ site.url }}/assets/article_images/2025-09-06-armo-project-bootstrap2/turbo_screenshot.png)
 
 
 - shared 패키지가 symlink로 연결되어 코드에서 바로 사용 가능
-
 ```ts
 // web/src/example.ts
 import { type, util } from "@armo/shared";
@@ -200,6 +190,7 @@ import { type, util } from "@armo/shared";
 
 ---
 ## 7. DoD (Definition of Done)
+
 - pnpm dev로 web/api 동시에 실행 OK
 - shared 패키지 로컬 연결 확인 OK
 - PR 시 Lint/Build 자동 검증 (GitHub Actions) OK
