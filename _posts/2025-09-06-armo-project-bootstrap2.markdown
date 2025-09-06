@@ -190,7 +190,7 @@ pnpm install
 
 - pnpm dev 로 web/api 동시에 실행 가능
 
-![실행 이미지]({{ site.baseurl }}/assets/article_images/2025-09-06-armo-project-bootstrap2/turbo_screenshot.png)
+![실행 이미지]({{ site.url }}/assets/article_images/2025-09-06-armo-project-bootstrap2/turbo_screenshot.png)
 
 
 - shared 패키지가 symlink로 연결되어 코드에서 바로 사용 가능
