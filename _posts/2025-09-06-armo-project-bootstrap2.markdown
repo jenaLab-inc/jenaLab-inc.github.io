@@ -7,8 +7,6 @@ tags: ["Armo 웹사이트", "pnpm workspaces", "turborepo", "모노레포", "yar
 keywords: ["pnpm workspaces 예제", "pnpm ERR_PNPM_FETCH_404 해결", "yarn vs pnpm 차이", "turborepo 빌드 최적화", "모노레포 초기 세팅", "Armo 프로젝트"]
 ---
 
-# Armo 웹사이트 개발기 0단계: 프로젝트 부트스트랩 실습 (with pnpm 오류 해결)
-
 지난 글([0단계 개요](https://jenalab-inc.github.io/2025/09/05/armo-project-bootstrap.html))에서는 Armo 웹사이트 프로젝트의 개발 규칙과 환경을 기술했다.
 
 이번 글은 그 **실습편**으로, 실제로 모노레포 구조를 만들고 `pnpm`과 `turbo`를 적용하면서 발생한 **오류 해결기**까지 정리하였다.
@@ -23,7 +21,7 @@ Armo 웹사이트는 `web`, `api`, `admin`, `shared` 네 영역으로 나눴습�
 - `admin`: 관리자 대시보드  
 - `shared`: 공통 타입과 유틸리티  
 
-```ini
+```bash
 armo/
 ├─ web/        # Next.js 프론트엔드
 ├─ api/        # Fastify/NestJS 백엔드
