@@ -2,7 +2,7 @@
 title: "Armo 개발 단계 #1.1 — DoD 달성을 위한 실전 순서"
 description: "Prisma와 Postgres(Supabase)로 데이터 모델을 스케치하고 마이그레이션 및 CRUD 검증까지 한 번에 끝내는 체크리스트"
 keywords: ["Armo", "데이터 모델", "Prisma", "마이그레이션", "Postgres", "Supabase", "CRUD", "MVP"]
-author: "Armo Dev Team"
+author: "Jerome Na"
 date: 2025-09-12
 ---
 

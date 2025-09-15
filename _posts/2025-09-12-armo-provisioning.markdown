@@ -3,7 +3,7 @@ title: "Armo 개발 단계 - 2. 인프라 1차 프로비저닝"
 description: "Armo 웹사이트 구축 과정 중 2단계, 인프라 1차 프로비저닝 단계에 대해 Supabase, Vercel, Fly.io 설정 순서와 체크리스트를 소개합니다."
 keywords: ["Armo", "웹사이트 개발", "인프라", "프로비저닝", "Supabase", "Vercel", "Fly.io", "Next.js", "Fastify"]
 date: 2025-09-12
-author: "제롬"
+author: "Jerome Na"
 ---
 
 Armo 프로젝트의 두 번째 단계는 인프라 1차 프로비저닝입니다.
