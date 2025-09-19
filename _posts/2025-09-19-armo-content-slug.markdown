@@ -1,5 +1,5 @@
 ---
-title: “Armo 개발 단계 #4: 콘텐츠 CRUD(초안·발행·예약) + 슬러그, 실전 가이드”
+title: "Armo 개발 단계 #4: 콘텐츠 CRUD(초안·발행·예약) + 슬러그"
 description: “Fastify + Prisma 기반으로 콘텐츠 CRUD 전 과정(초안, 발행, 예약발행)과 SEO 친화적 슬러그 전략을 순서대로 구현합니다.”
 date: 2025-09-19 10:00:00 +0900
 categories: [Armo, Backend, Fastify, Prisma]
