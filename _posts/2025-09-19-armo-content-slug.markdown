@@ -1,10 +1,10 @@
 ---
 title: "Armo 개발 단계 #4: 콘텐츠 CRUD(초안·발행·예약) + 슬러그"
-description: “Fastify + Prisma 기반으로 콘텐츠 CRUD 전 과정(초안, 발행, 예약발행)과 SEO 친화적 슬러그 전략을 순서대로 구현합니다.”
+description: “artists, artworks, goods, packages, stories, journals, faqs 전 엔드포인트에 공통 상태머신(draft→scheduled|published)과 슬러그 자동생성/중복처리를 적용하고, API DoD(초안 생성→발행 업데이트)까지 한 사이클을 완주합니다.”
 date: 2025-09-19 10:00:00 +0900
 categories: [Armo, Backend, Fastify, Prisma]
-tags: [콘텐츠관리, CRUD, 초안, 발행, 예약발행, 슬러그, Fastify, Prisma, Node.js, SEO]
-keywords: [“콘텐츠 CRUD”, “초안”, “발행”, “예약 발행”, “슬러그”, “SEO”, “Fastify”, “Prisma”, “Node.js 블로그”]
+tags: [CRUD, 상태머신, 예약발행, 슬러그, 유니크검증, artists, artworks, goods, packages, stories, journals, faqs, Fastify, Prisma, Node.js]
+keywords: [“콘텐츠 CRUD”,“초안”,“발행”,“예약발행”,“슬러그”,“유니크”,“Fastify”,“Prisma”,“artists”,“artworks”,“goods”,“packages”,“stories”,“journals”,“faqs”]
 author: "Jerome Na"
 ---
 
@@ -14,80 +14,113 @@ author: "Jerome Na"
 ---
 
 ## 목표
-- 모델/마이그레이션 설계 (초안/발행/예약 상태, 시간 필드)
-- SEO 슬러그 생성·중복 처리·갱신 규칙
-- CRUD API (Create/Read/Update/Delete)
-- 상태 전이(초안↔발행, 예약→자동발행)
-- 예약발행 스케줄러(간단 Cron/Job)
-- 실전 테스트 시나리오 (curl/HTTPie)
+- 글/콘텐츠를 만들고(초안) → 예약/발행까지 한 사이클 가능
+- 엔드포인트: artists/*, artworks/*, goods/*, packages/*, stories/*, journals/*, faqs/*
+- 필수 필드 검증: 제목, 썸네일, 슬러그 유니크
+- 상태머신: draft -> scheduled | published (+ publishedAt)
+- 슬러그 자동 생성 및 중복 처리
+- DoD: API로 내용 생성 → draft 저장 → published 업데이트 성공
 
 ---
 
-## 1 데이터 모델 설계
+## 1 Prisma 스키마 — 공통 상태/필드
+모든 리소스(artists, artworks, goods, packages, stories, journals, faqs)에 동일한 최소 필드를 둡니다.
+
 ```ts
 // prisma/schema.prisma
-enum PostStatus {
+enum PublishStatus {
   DRAFT
   SCHEDULED
   PUBLISHED
-  ARCHIVED
 }
 
-model Post {
-  id           String     @id @default(cuid())
+model Artist {
+  id           String        @id @default(cuid())
   title        String
-  content      String     @db.Text
-  status       PostStatus @default(DRAFT)
-
-  // SEO
-  slug         String
-  // 시간/상태 관리
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  publishedAt  DateTime?
+  thumbnailUrl String
+  slug         String        @unique
+  status       PublishStatus @default(DRAFT)
   scheduledAt  DateTime?
-  ...
+  publishedAt  DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
+
+// 동일 스펙으로 복제 — 리소스명만 변경
+model Artwork   { ... }
+model Good      { ... }
+model Package   { ... }
+model Story     { ... }
+model Journal   { ... }
+model Faq       { ... }
 ```
 
-설계 포인트
-- status 4단계: DRAFT → (SCHEDULED) → PUBLISHED → ARCHIVED
-- scheduledAt 도달 시 자동 발행
-- slug 전역 유니크(+ 충돌 시 -2, -3… 접미)
+왜 전부 유니크 슬러그?: 페이지 라우팅·SEO·공유 URL 안정성을 위해 각 컬렉션 내 유니크를 보장합니다(요구사항에 맞춰 “전역 유니크”로 바꾸고 싶다면 별도 SlugRegistry 테이블로 통합 관리하세요).
 
 마이그레이션:
 ```bash
-pnpm prisma migrate dev --name init_posts
+pnpm prisma migrate dev --name stage4_content_crud_slug
+```
+---
+
+## 2 Zod DTO — 필수 필드 검증
+```ts
+// src/dto/content.dto.ts
+import { z } from 'zod'
+
+export const createContentDto = z.object({
+  title: z.string().trim().min(1, '제목은 필수입니다'),
+  thumbnailUrl: z.string().url('썸네일은 URL이어야 합니다'),
+  // slug는 서버에서 자동 생성
+  // status는 생성 시 DRAFT 고정
+})
+
+export const updateContentDto = z.object({
+  title: z.string().trim().min(1).optional(),
+  thumbnailUrl: z.string().url().optional(),
+})
+
+export type CreateContentDto = z.infer<typeof createContentDto>
+export type UpdateContentDto = z.infer<typeof updateContentDto>
 ```
 
 ---
 
-## 2 유틸: 슬러그 생성 & 충돌 해결
+## 3 슬러그 자동 생성 & 중복 처리
 ```ts
 // src/utils/slug.ts
-import { PrismaClient } from '@prisma/client'
 import slugify from 'slugify'
+
+export function toBaseSlug(title: string) {
+  const base = slugify(title, { lower: true, strict: true, trim: true, locale: 'ko' })
+  return base || 'item'
+}
+```
+
+```ts
+// src/services/slug.service.ts
+import { PrismaClient } from '@prisma/client'
+import { toBaseSlug } from '../utils/slug'
 
 const prisma = new PrismaClient()
 
-export async function makeUniqueSlug(title: string, hintId?: string) {
-  const base = slugify(title, {
-    lower: true,
-    strict: true, // 특수문자 제거
-    trim: true,
-    locale: 'ko',
-  }) || 'post'
-
-  // 같은 제목이라도 같은 글이면 유지(hintId로 자기 자신 업데이트 허용)
+// 리소스별 델리게이트를 받아 유니크 검사
+export async function makeUniqueSlugFor(
+  title: string,
+  delegate: any,        // e.g. prisma.artist
+  exceptId?: string,    // update 시 자기 자신 제외
+) {
+  const base = toBaseSlug(title)
   let candidate = base
   let n = 2
 
-  // 충돌 검사
-  // (hintId가 있으면 자기 자신은 무시)
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    const found = await prisma.post.findFirst({
-      where: { slug: candidate, ...(hintId ? { NOT: { id: hintId } } : {}) },
+    const found = await delegate.findFirst({
+      where: {
+        slug: candidate,
+        ...(exceptId ? { NOT: { id: exceptId } } : {}),
+      },
       select: { id: true },
     })
     if (!found) return candidate
@@ -95,240 +128,244 @@ export async function makeUniqueSlug(title: string, hintId?: string) {
   }
 }
 ```
-규칙: 제목 수정 시 slug는 **발행 전(=DRAFT/SCHEDULED)** 에만 자동 갱신. 이미 PUBLISHED면 기본적으로 고정(링크 안정성). 필요 시 별도 수동 변경 엔드포인트 제공.
 
 ---
 
-## 3 서비스 레이어: 상태 전이 보호 규칙
+## 4 공통 서비스 팩토리 — 상태머신 포함
 ```ts
-// src/services/post.service.ts
-import { PrismaClient, PostStatus } from '@prisma/client'
-import { makeUniqueSlug } from '../utils/slug'
+// src/services/content.factory.ts
+import { PrismaClient, PublishStatus } from '@prisma/client'
+import { makeUniqueSlugFor } from './slug.service'
+import { CreateContentDto, UpdateContentDto } from '../dto/content.dto'
 
 const prisma = new PrismaClient()
 
-export const PostService = {
-  async createDraft(input: { title: string; content: string; authorId?: string }) {
-    const slug = await makeUniqueSlug(input.title)
-    return prisma.post.create({
-      data: {
-        ...input,
-        status: PostStatus.DRAFT,
-        slug,
-      },
-    })
-  },
+type Delegates =
+  | PrismaClient['artist']
+  ...
 
-  async update(id: string, input: { title?: string; content?: string }) {
-    ...
-  },
+export function makeContentService(delegate: Delegates) {
+  return {
+    async createDraft(input: CreateContentDto) {
+      const slug = await makeUniqueSlugFor(input.title, delegate)
+      return delegate.create({
+        data: { ...input, slug, status: 'DRAFT' },
+      })
+    },
 
-  async publishNow(id: string) {
-    const post = await prisma.post.findUniqueOrThrow({ where: { id } })
-    if (post.status === PostStatus.PUBLISHED) return post
-    return prisma.post.update({
-      where: { id },
-      data: { status: PostStatus.PUBLISHED, publishedAt: new Date(), scheduledAt: null },
-    })
-  },
+    async update(id: string, input: UpdateContentDto) {
+      const current = await delegate.findUniqueOrThrow({ where: { id } })
+      ...
+    },
 
-  async schedule(id: string, when: Date) {
-    ...
-  },
+    async schedule(id: string, whenIso: string) {
+      const when = new Date(whenIso)
+      ...
+    },
 
-  async unpublish(id: string) {
-    ...
-  },
+    async publishNow(id: string) {
+      return delegate.update({
+        where: { id },
+        data: { status: 'PUBLISHED', scheduledAt: null, publishedAt: new Date() },
+      })
+    },
 
-  async remove(id: string) {
-    return prisma.post.delete({ where: { id } })
-  },
+    async list(status?: PublishStatus, q?: string) {
+      return delegate.findMany({
+        where: {
+          ...(status ? { status } : {}),
+          ...(q
+            ? { OR: [{ title: { contains: q, mode: 'insensitive' } }] }
+            : {}),
+        },
+        orderBy: [{ createdAt: 'desc' }],
+      })
+    },
 
-  async list(params: { status?: PostStatus; q?: string }) {
-    const { status, q } = params
-    return prisma.post.findMany({
-      where: {
-        ...(status ? { status } : {}),
-        ...(q
-          ? {
-              OR: [
-                { title: { contains: q, mode: 'insensitive' } },
-                { content: { contains: q, mode: 'insensitive' } },
-              ],
-            }
-          : {}),
-      },
-      orderBy: [{ createdAt: 'desc' }],
-    })
-  },
+    async remove(id: string) {
+      await delegate.delete({ where: { id } })
+    },
+  }
 }
+
+// 각 리소스용 인스턴스
+export const ArtistService  = makeContentService(prisma.artist)
+...
+
 ```
 
 ---
 
-## 4 라우트: CRUD + 상태/예약 API
+## 5 라우트 — 7개 리소스 공통 패턴
+
+엔드포인트 패턴(모두 동일):
+- POST /api/{resource} — 초안 생성(draft)
+- GET /api/{resource} — 목록(필터: status, q)
+- GET /api/{resource}/:id — 단건 조회
+- PATCH /api/{resource}/:id — 수정(발행 전에는 슬러그 자동 갱신)
+- POST /api/{resource}/:id/schedule — 예약발행(scheduledAt)
+- POST /api/{resource}/:id/publish — 즉시 발행
+- DELETE /api/{resource}/:id — 삭제
+
 ```ts
-// src/routes/post.routes.ts
+// src/routes/content.routes.ts
 import { FastifyInstance } from 'fastify'
-import { PostService } from '../services/post.service'
+import { z } from 'zod'
+import {
+  ArtistService, ArtworkService, GoodService,
+  PackageService, StoryService, JournalService, FaqService
+} from '../services/content.factory'
+import { createContentDto, updateContentDto } from '../dto/content.dto'
 
-export async function registerPostRoutes(app: FastifyInstance) {
-  app.post('/api/posts', async (req, rep) => {
-    const { title, content } = req.body as any
-    const post = await PostService.createDraft({ title, content, authorId: (req.user as any)?.id })
-    return rep.code(201).send(post)
+const scheduleDto = z.object({ when: z.string().datetime() })
+
+function mountContent(app: FastifyInstance, base: string, svc: any) {
+  app.post(`/api/${base}`, async (req, rep) => {
+    const input = createContentDto.parse(req.body)
+    const data = await svc.createDraft(input)
+    return rep.code(201).send(data)
   })
 
-  app.get('/api/posts', async (req) => {
+  app.get(`/api/${base}`, async (req) => {
     const { status, q } = (req.query as any) || {}
-    return PostService.list({ status, q })
+    return svc.list(status, q)
   })
 
-  app.get('/api/posts/:id', async (req) => {
+  app.get(`/api/${base}/:id`, async (req) => {
     const { id } = req.params as any
-    return PostService.update(id, {}) // 조회 전용: findUnique 별도 구현해도 OK
+    // findUniqueOrThrow로 교체하고 싶다면 서비스에 노출하세요
+    return svc.update(id, {}) // 조회 전용 핸들러를 별도 두어도 됩니다
   })
 
-  app.patch('/api/posts/:id', async (req) => {
-    ...
+  app.patch(`/api/${base}/:id`, async (req) => {
+    const { id } = req.params as any
+    const input = updateContentDto.parse(req.body)
+    return svc.update(id, input)
   })
 
-  app.post('/api/posts/:id/publish', async (req) => {
-    ...
+  app.post(`/api/${base}/:id/schedule`, async (req) => {
+    const { id } = req.params as any
+    const { when } = scheduleDto.parse(req.body)
+    return svc.schedule(id, when)
   })
 
-  app.post('/api/posts/:id/schedule', async (req) => {
-    ...
+  app.post(`/api/${base}/:id/publish`, async (req) => {
+    const { id } = req.params as any
+    return svc.publishNow(id)
   })
 
-  app.post('/api/posts/:id/unpublish', async (req) => {
-    ...
+  app.delete(`/api/${base}/:id`, async (req, rep) => {
+    const { id } = req.params as any
+    await svc.remove(id)
+    return rep.code(204).send()
   })
+}
 
-  app.delete('/api/posts/:id', async (req, rep) => {
-    ...
-  })
+export async function registerContentRoutes(app: FastifyInstance) {
+  mountContent(app, 'artists',  ArtistService)
+  ...
 }
 ```
 
-보안: 발행/예약/삭제는 관리자 권한 가드 미들웨어를 붙여주세요. (e.g., preHandler: [requireAdmin])
+권한: publish/schedule/delete에는 관리자 가드를 붙이세요. (preHandler: [requireAdmin])
+검증: 모든 POST/PATCH에서 Zod로 제목/썸네일 필수 검사, 슬러그 유니크는 DB + 사전조회로 이중 방지.
 
 ---
 
-## 5 예약발행 스케줄러
-
-가볍게 시작하려면 node-cron으로 1분마다 폴링:
+## 6 예약발행 스케줄러(공통)
 ```ts
 // src/jobs/publish-scheduler.ts
 import cron from 'node-cron'
-import { PrismaClient, PostStatus } from '@prisma/client'
+import { PrismaClient, PublishStatus } from '@prisma/client'
 
 const prisma = new PrismaClient()
+const delegates = [
+  prisma.artist, prisma.artwork, prisma.good,
+  prisma.package, prisma.story, prisma.journal, prisma.faq,
+]
 
 export function startPublishScheduler() {
-  // 매 분 0초마다
-  cron.schedule('0 * * * * *', async () => {
+  // 매 10초마다 체크(데모). 운영은 1분 단위 권장.
+  cron.schedule('*/10 * * * * *', async () => {
     const now = new Date()
-    const toPublish = await prisma.post.findMany({
-      where: {
-        status: PostStatus.SCHEDULED,
-        scheduledAt: { lte: now },
-      },
-      select: { id: true },
-      take: 50, // 배치 크기
-    })
-
-    if (!toPublish.length) return
-
-    await prisma.$transaction(
-      toPublish.map(({ id }) =>
-        prisma.post.update({
-          where: { id },
-          data: { status: PostStatus.PUBLISHED, publishedAt: now, scheduledAt: null },
-        }),
-      ),
-    )
-    // TODO: 캐시 무효화/웹훅/검색 인덱싱 등
+    await Promise.all(delegates.map(async (d) => {
+      const due = await d.findMany({
+        where: { status: PublishStatus.SCHEDULED, scheduledAt: { lte: now } },
+        select: { id: true },
+        take: 100,
+      })
+      if (!due.length) return
+      await prisma.$transaction(
+        due.map(({ id }) => d.update({
+          where: { id }, data: { status: PublishStatus.PUBLISHED, scheduledAt: null, publishedAt: now },
+        }))
+      )
+    }))
   })
 }
 ```
-
-서버 시작 시 활성화:
+서버 부팅 시 구동:
 ```ts
 // src/server.ts
 import Fastify from 'fastify'
-import { registerPostRoutes } from './routes/post.routes'
+import { registerContentRoutes } from './routes/content.routes'
 import { startPublishScheduler } from './jobs/publish-scheduler'
 
 const app = Fastify({ logger: true })
 
-app.register(registerPostRoutes)
-
+app.register(registerContentRoutes)
 startPublishScheduler()
 
 app.listen({ port: 3000, host: '0.0.0.0' }).then(() => {
-  app.log.info('Server running on http://localhost:3000')
+  app.log.info('Server http://localhost:8080')
 })
 ```
 
-트래픽이 커지면 pg-boss/큐로 전환하고, 예약 도달 시점에 **단일 UPDATE … WHERE status=SCHEDULED AND scheduledAt<=now()** 로 아토믹 처리 + 락 전략을 권장합니다.
+---
+
+## 7 상태머신 규칙 요약
+- 생성시: status = DRAFT, slug = 자동생성(중복시 -2, -3 …)
+- draft → scheduled: scheduledAt(미래) 필수, publishedAt=null
+- scheduled → published: 스케줄러가 도달 시 자동 전환(publishedAt=now)
+- draft → published: 즉시 발행 엔드포인트로 전환
+- 발행 후 제목 수정: 기본적으로 슬러그 고정(링크 안정성). 발행 전(DRAFT/SCHEDULED)에는 제목 변경 시 슬러그 자동 갱신
 
 ---
 
-## 6 상태 전이 규칙 (요약)
-
-- DRAFT → PUBLISHED: publishNow()
-- DRAFT → SCHEDULED: schedule(when)
-- SCHEDULED → PUBLISHED: 스케줄러 자동 전환
-- PUBLISHED → DRAFT: unpublish() (링크 변동 주의)
-- PUBLISHED 상태에서 제목 변경 시 기본 슬러그 고정(링크 안정). 정말 바꾸려면 관리 전용 엔드포인트 + 301 리다이렉트 맵을 마련합니다.
-
----
-
-## 7 테스트 시나리오 (HTTPie 예시)
+## 8 DoD — 한 사이클 통과 시나리오
+다음은 stories 리소스로 예시했지만, 7개 전부 동일합니다.
 ```bash
-# 1) 초안 생성
-http POST :3000/api/posts title='안녕, 아르모' content='콘텐츠 본문입니다.'
+# 1) 초안 생성 (DRAFT)
+http POST :3000/api/stories title='아르모 출범' thumbnailUrl='https://img.cdn/armo.png'
+# -> 201 Created, body.id 저장
+export ID=cl_xyz123
 
-# → 응답의 id 복사
-export ID=clzw...abc
+# 2) 예약 발행 (SCHEDULED)
+http POST :3000/api/stories/$ID/schedule when='2025-09-19T12:00:00+09:00'
+# -> status: SCHEDULED, scheduledAt: …
 
-# 2) 초안 수정 (발행 전이라 slug 자동 갱신)
-http PATCH :3000/api/posts/$ID title='아르모, 첫 인사' content='업데이트 본문'
+# 3) 즉시 발행으로 변경(선택)
+http POST :3000/api/stories/$ID/publish
+# -> status: PUBLISHED, publishedAt: now
 
-# 3) 예약 발행
-http POST :3000/api/posts/$ID/schedule when='2025-09-19T10:30:00+09:00'
-
-# 4) 목록 (예약 상태만)
-http GET :3000/api/posts status==SCHEDULED
-
-# 5) 즉시 발행으로 변경 (예약 취소 + 발행)
-http POST :3000/api/posts/$ID/publish
-
-# 6) 발행 취소 → 초안
-http POST :3000/api/posts/$ID/unpublish
-
-# 7) 삭제
-http DELETE :3000/api/posts/$ID
+# 4) 검증 — 목록/단건 조회
+http GET :3000/api/stories status==PUBLISHED
+http GET :3000/api/stories/$ID
 ```
 
----
-
-## 8 에러/엣지 케이스 가이드
-
-- 슬러그 충돌: 자동 -2, -3… 접미. 다국어(한글) 제목은 slugify(locale:'ko')로 처리.
-- 예약시간 과거: 400 (유효성 검사).
-- 이미 발행된 글 예약: 409/400 (비즈니스 규칙 위반).
-- 발행 취소: 공개 URL 깨짐 위험 → UI에 경고/확인 모달 + 301 리다이렉트 옵션 제공.
-- 제목 대량 변경: 발행 글은 기본 고정. 운영 중 URL 안정성 최우선.
+DoD 통과 조건
+- API로 내용 생성 → DB에 DRAFT 저장 확인
+- 같은 항목을 SCHEDULED 또는 PUBLISHED로 업데이트 성공
+- 슬러그가 자동 생성되고, 중복 시 접미(-2, -3 …) 처리 확인
+- 필수 필드(제목/썸네일) 미제공 시 4xx 반환 확인
 
 ---
 
-## 9 SEO 체크리스트
+## 9 에러/엣지 처리 체크리스트
 
-- 슬러그는 짧고 의미 있는 키워드로 (불필요 stopword 제거).
-- 발행 시점에 publishedAt → Sitemap/Feed 반영.
-- 예약발행은 정확한 시간에 공개되어 SNS/알림과 동기화.
-- 발행 후 Open Graph/Twitter 카드 메타 업데이트.
-- 301 리다이렉트 맵 보유(슬러그 변경 시).
+- 과거 시각 예약 금지 (400)
+- 이미 PUBLISHED 항목 예약 금지
+- 슬러그 충돌: 자동 접미 처리 + DB @unique로 이중 방어
+- 발행 후 슬러그 변경 방지(링크 안정). 필요 시 별도 관리자 기능 + 301 리다이렉트 맵
+- 스케줄러 주기/배치 크기/트랜잭션 적용(운영 트래픽↑ 시 큐/락 적용)
 
