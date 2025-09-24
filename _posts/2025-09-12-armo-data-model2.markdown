@@ -6,13 +6,15 @@ author: "Jerome Na"
 date: 2025-09-12
 ---
 
-이 글은 **“1. 데이터 모델 스케치 & 마이그레이션”**의 완료 기준(DoD)인  
+이 글은 **1. 데이터 모델 스케치 & 마이그레이션**의 완료 기준(DoD)인  
 - `pnpm prisma migrate dev` 성공  
 - 로컬 DB에서 **기본 CRUD** 동작을 **순서대로** 달성하는 실전 가이드입니다.  
 
 (목표/테이블/공통필드는 1단계 정의를 따릅니다. 테이블: `artists, artworks, goods, packages,...` / 공통 필드: `id, slug, status, publish_at, created_at, updated_at`)
 
 > 참고: 본 단계는 Armo 1단계(MVP) 중 “데이터 모델 스케치 & 마이그레이션”에 해당합니다. (개발 단계 문서) 
+
+> 예시 소스는 전체 소스가 아닙니다. 구조만 보여주기 위한 소스이기 때문에 ...으로 되어 있는 부분은 각자에 맞게 수정하셔야 합니다.
 
 ---
 
@@ -66,7 +68,7 @@ pnpm prisma init
 ```
 
 prisma/schema.prisma를 아래 예시로 교체(핵심 테이블 + 공통필드 + 관계):
-```prisma
+```ts
 generator client {
   provider = "prisma-client-js"
 }
