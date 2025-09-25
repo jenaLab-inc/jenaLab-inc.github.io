@@ -48,7 +48,7 @@ import PgBoss from 'pg-boss'
 export async function createBoss() {
   const boss = new PgBoss({
     connectionString: process.env.DATABASE_URL!,
-    schema: 'job_queue', // 전용 스키마 권장
+    schema: '잡 스키마 이름', // 전용 스키마 권장
     application_name: 'armo-worker',
   })
   await boss.start()
@@ -68,7 +68,7 @@ import { PrismaClient, Status } from '@prisma/client'
 import { createBoss } from './boss'
 
 const prisma = new PrismaClient()
-const JOB_NAME = 'publish-content'
+const JOB_NAME = '잡 이름'
 
 export async function startPublishWorker() {
   const boss = await createBoss()
@@ -100,7 +100,7 @@ export async function startPublishWorker() {
 ```ts
 // src/services/schedule.service.ts
 import { createBoss } from '../jobs/boss'
-const JOB_NAME = 'publish-content'
+const JOB_NAME = '잡 이름'
 
 export async function enqueuePublish(model: string, id: string, when: Date) {
   const boss = await createBoss()

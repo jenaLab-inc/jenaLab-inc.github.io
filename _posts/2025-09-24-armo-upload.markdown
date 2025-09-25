@@ -70,7 +70,7 @@ export async function registerMediaRoutes(app: FastifyInstance) {
     })
 
     // 3. 워커에 파생 생성 잡 등록
-    await app.boss.send('generate-derivatives', { assetId: asset.id })
+    await app.boss.send('워커 이름', { assetId: asset.id })
 
     return { success: true, asset }
   })
@@ -105,7 +105,7 @@ const SIZES = [
 export async function startDerivativeWorker() {
   const boss = await getBoss()
 
-  await boss.work('generate-derivatives', async (job) => {
+  await boss.work('워커 이름', async (job) => {
     const { assetId } = job.data
     const asset = await prisma.mediaAsset.findUniqueOrThrow({ where: { id: assetId } })
 

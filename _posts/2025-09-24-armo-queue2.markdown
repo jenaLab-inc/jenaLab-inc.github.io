@@ -54,7 +54,7 @@ export async function getBoss() {
   if (bossSingleton) return bossSingleton
   const boss = new PgBoss({
     connectionString: process.env.DATABASE_URL!,
-    schema: 'job_queue',                 // 전용 스키마 권장
+    schema: '잡 시키마 이름',                 // 전용 스키마 권장
     application_name: 'armo-worker',     // 이름은 구분용이기에, 적당한 것 사용하면 됨.
     newJobCheckInterval: 1000,           // 1s 체크 (기본 4s)
     archiveCompletedAfterSeconds: 3600,  // 1시간 후 아카이브
@@ -305,7 +305,7 @@ http POST :3000/api/stories/$ID/schedule publishAt:="2025-10-01T10:00:00+09:00"
 ```sql
 select id, name, startafter, state
 from job_queue.job
-where name = 'publish-content'
+where name = '잡 이름'
 order by startafter desc
 limit 5;
 ```
