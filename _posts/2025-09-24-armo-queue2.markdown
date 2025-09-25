@@ -1,0 +1,326 @@
+---
+title: “Armo 개발 단계 5. 잡 큐(pg-boss) & 예약 발행 워커 실전”
+description: “콘텐츠 예약 발행을 자동으로 처리하는 잡 큐(pg-boss) 워커를 구축합니다. 예약 시간에 맞춰 상태를 scheduled → published로 전환하고, 실패 시 재시도 및 데드레터 큐를 활용하는 방법을 소개합니다.”
+date: 2025-09-23 10:00:00 +0900
+categories: [Armo, Backend, Fastify, Prisma, Queue]
+tags: [pg-boss, 잡큐, 예약발행, 워커, Fastify, Prisma, Node.js, 콘텐츠관리]
+keywords: [“pg-boss”, “예약 발행”, “잡 큐”, “워크플로우”, “scheduled publish”, “콘텐츠 자동화”, “Fastify”, “Prisma”]
+author: "Jerome Na"
+---
+
+- 콘텐츠 예약 발행을 자동으로 처리하는 잡 큐(pg-boss) 워커를 구축. 
+- 예약 시간에 맞춰 상태를 scheduled → published로 전환하고, 실패 시 재시도 및 데드레터 큐를 활용.
+
+## 목표
+- 예약 시간에 맞춰 콘텐츠 자동 발행
+- 실패 시 재시도 & 데드레터 큐 관리
+- 워커 컨테이너 분리 가능 (API 내 스레드로 시작)
+
+---
+
+## 1. pg-boss 설치 및 연결
+```bash
+pnpm add pg-boss
+```
+.env
+```env
+DATABASE_URL=postgresql://user:pass@host:5432/db
+```
+
+---
+
+## 2. 전용 스키마 만들기
+
+- supabase의 SqlEditor에서 실행
+
+```sql
+create schema if not exists job_queue;
+grant usage on schema job_queue to postgres, anon, authenticated, service_role;
+```
+
+이제 pg-boss를 schema=job_queue로 쓰면 앱 데이터와 분리돼서 관리가 편하다.
+
+---
+
+## 3. Boss 초기화 모듈
+
+src/jobs/boss.ts
+```ts
+import PgBoss from 'pg-boss'
+
+let bossSingleton: PgBoss | null = null
+
+export async function getBoss() {
+  if (bossSingleton) return bossSingleton
+  const boss = new PgBoss({
+    connectionString: process.env.DATABASE_URL!,
+    schema: 'job_queue',                 // 전용 스키마 권장
+    application_name: 'armo-worker',     // 이름은 구분용이기에, 적당한 것 사용하면 됨.
+    newJobCheckInterval: 1000,           // 1s 체크 (기본 4s)
+    archiveCompletedAfterSeconds: 3600,  // 1시간 후 아카이브
+    deleteArchivedAfterSeconds: 7 * 86400, // 7일 보관 후 삭제
+  })
+  await boss.start()
+  bossSingleton = boss
+
+  // 그레이스풀 종료
+  const shutdown = async () => {
+    try { await boss.stop() } catch {}
+    process.exit(0)
+  }
+  process.on('SIGINT', shutdown)
+  process.on('SIGTERM', shutdown)
+
+  return boss
+}
+```
+
+---
+
+## 4. 잡 이름 & 모델 가드
+
+src/jobs/names.ts
+
+```ts
+export const JOB_PUBLISH = '잡이름'
+
+export const allowedModels = [
+  'artist',...
+] as const
+export type AllowedModel = typeof allowedModels[number]
+
+export function assertAllowedModel(model: string): asserts model is AllowedModel {
+  if (!allowedModels.includes(model as any)) {
+    throw new Error(`Unknown model: ${model}`)
+  }
+}
+```
+
+---
+
+## 5. 예약 발행 워커 (idempotent)
+
+- 중복 방지: 조건부 업데이트(상태가 scheduled이고 publishAt<=now()일 때만 published로 전환).
+- 같은 콘텐츠에 예약 잡이 여러 개 있어도 한 번만 바뀌도록 만든다.
+
+src/jobs/publish.worker.ts
+```ts
+import { PrismaClient, Status } from '@prisma/client'
+import { getBoss } from './boss'
+import { JOB_PUBLISH, assertAllowedModel } from './names'
+
+const prisma = new PrismaClient()
+
+function getDelegate(model: string) {
+  assertAllowedModel(model)
+  return (prisma as any)[model]
+}
+
+export async function startPublishWorker() {
+  const boss = await getBoss()
+
+  console.log('[publish-worker] Starting worker...');
+
+  wait boss.work(
+    JOB_PUBLISH,
+    {
+      batchSize: 5,
+      pollingIntervalSeconds: 2, // 2초마다 폴링
+    },
+    async (jobs) => {
+      console.log(`[publish-worker] Received ${jobs.length} jobs`);
+      // pg-boss v10에서는 배치로 작업을 처리하므로 각 작업을 순회
+      for (const job of jobs) {
+        const { model, id } = job.data as { model: string; id: string };
+        const delegate = getDelegate(model);
+        const now = new Date();
+
+        // idempotent 전환 (조건 충족 시에만)
+        const result = await delegate.updateMany({
+          where: {
+            id,
+            status: Status.scheduled,
+            publishAt: { lte: now },
+          },
+          data: {
+            status: Status.published,
+            publishAt: now,
+          },
+        });
+
+        if (result.count === 0) {
+          // 이미 발행되었거나, 아직 시간이 안 됐거나, 상태가 draft인 경우
+          console.log(`[publish-worker] skip ${model}:${id} (no-op)`);
+          continue;
+        }
+
+        console.log(`[publish-worker] ${model}:${id} → published @${now.toISOString()}`);
+        // TODO: 여기서 검색 인덱싱, 캐시 무효화, 웹훅 등을 트리거
+      }
+    }
+  );
+
+  console.log('[publish-worker] started');
+}
+```
+
+---
+
+## 6. 큐 등록 헬퍼 (예약 시 잡 넣기)
+
+src/services/schedule.queue.ts
+```ts
+import { getBoss } from '@/jobs/boss';
+import { JOB_PUBLISH } from '@/jobs/names';
+
+export async function enqueuePublish(model: string, id: string, when: Date) {
+  const boss = await getBoss();
+  // send(name, data, options) - 특정 시간에 1회 실행용
+  try {
+    // 현재 시간과 스케줄 시간 비교
+    const now = new Date();
+    const delaySeconds = Math.floor((when.getTime() - now.getTime()) / 1000);
+    console.log(
+      `[enqueuePublish] Current time: ${now.toISOString()}, Schedule time: ${when.toISOString()}, Delay: ${delaySeconds}s`
+    );
+
+    const jobId = await boss.send(JOB_PUBLISH, { model, id }, { startAfter: when });
+
+    return jobId;
+  } catch (error) {
+    console.error(`[enqueuePublish] Error scheduling job:`, error);
+    throw error;
+  }
+}
+```
+
+**재예약(시간 변경)** 을 특별히 취소하지 않아도 됨. 워커가 조건부 업데이트라 먼저 도달한 잡만 성공하고, 나중 잡은 no-op이 되어 안전하다(MVP 전략).
+
+---
+
+## 7. 기존 schedule()에 큐 연동
+
+이전 4단계에서 작성한 서비스의 schedule()을 큐 enqueue 포함으로 바꾼다.
+(아래는 StoryService 예시 — 다른 리소스도 동일)
+
+src/services/content.factory.ts 안의 schedule 구현(예시):
+
+```ts
+import { enqueuePublish } from './schedule.queue'
+import { PrismaClient, Status } from '@prisma/client'
+const prisma = new PrismaClient()
+
+type ModelName = 'artist' | ...;
+
+type DelegateMap = {
+  artist: PrismaClient['artist'];
+  ...
+};
+
+export function makeContentService<T extends ModelName>(
+  delegate: DelegateMap[T],
+  // 각 타입별 슬러그 소스 텍스트 선택 로직
+  pickSlugText: (inputOrExisting: any) => string,
+  modelName: T
+) {
+
+// ...
+      // SCHEDULE
+      async schedule(id: string, publishAtIso: string) {
+        const when = new Date(publishAtIso);
+        if (isNaN(when.getTime()) || when <= new Date()) {
+          throw new Error('publishAt은 미래 시각이어야 합니다.');
+        }
+        const cur = await (delegate as any).findUniqueOrThrow({ where: { id } });
+        if (cur.status === Status.published) {
+          throw new Error('이미 발행된 항목은 예약할 수 없습니다.');
+        }
+
+        const updated = await (delegate as any).update({
+          where: { id },
+          data: { status: Status.scheduled, publishAt: when },
+        });
+
+        // 큐 등록 (모델명은 Prisma delegate 키와 일치)
+        // 예: 'story', 'journal', 'artist' ...
+        await enqueuePublish(modelName, id, when);
+        return updated;
+      }
+}
+
+export const ArtistService = makeContentService(
+  prisma.artist,
+  (x) => x.nameKo || x.nameEn,
+  'artist'
+);
+...
+```
+
+주의: 위에서 delegate._model 접근이 라이브러리 버전에 따라 없을 수 있어.
+
+안전하게 하려면 makeContentService(delegate, modelName: 'story')처럼 서비스를 만들 때 모델명을 넘겨 쓰면 된다.
+
+---
+
+## 8. 실행 방식
+
+워커를 별도 프로세스로 분리
+
+src/worker.ts
+```ts
+import { startPublishWorker } from './jobs/publish.worker'
+startPublishWorker()
+```
+
+package.json 스크립트:
+
+```json
+{
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "worker": "tsx src/worker.ts"
+  }
+}
+```
+
+Fly.io 등에서 api와 worker를 별도 프로세스로 지정하면 배포/스케일을 독립적으로 가져갈 수 있다.
+
+## 9. 테스트 (DoD 시나리오)
+
+1.	콘텐츠 생성 → 예약
+```bash
+# Story 예시
+http POST :3000/api/stories title='아르모 런칭 스토리' body='...' type='brand'
+# → 201 Created { id: "cl_xxx", status:"draft" ... }
+
+ID=cl_xxx
+
+# +09:00 (서울)로 1~2분 뒤 예약
+http POST :3000/api/stories/$ID/schedule publishAt:="2025-10-01T10:00:00+09:00"
+# → { status:"scheduled", publishAt:"..." }
+```
+
+2.	큐에 스케줄된 잡 확인(선택: Supabase SQL Editor)
+
+```sql
+select id, name, startafter, state
+from job_queue.job
+where name = 'publish-content'
+order by startafter desc
+limit 5;
+```
+
+3.	1~2분 대기 → 자동 발행 로그 확인
+
+- API와 같은 프로세스면 서버 콘솔에서:
+```bash
+[publish-worker] story:cl_xxx → published @2025-10-01T01:00:00.000Z
+```
+
+4.	DB/엔드포인트로 상태 검증
+```bash
+http GET :3000/api/stories/$ID
+# → status:"published", publishAt: now()
+```
+
+✅ DoD 통과: 예약 시간 경과 후 자동으로 scheduled → published 전환됨을 로그와 응답으로 확인.
