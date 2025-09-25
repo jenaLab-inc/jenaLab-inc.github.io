@@ -1,7 +1,7 @@
 ---
 title: “Armo 개발 단계 6 — 미디어 업로드 & 파생 생성(썸네일/웹용) 실전”
 description: “Supabase Storage에 원본 이미지를 업로드한 뒤, Sharp 워커를 통해 썸네일·웹·레티나 파생본을 자동 생성하고 메타데이터를 DB에 기록하는 과정을 정리합니다.”
-date: 2025-09-24 10:00:00 +0900
+date: 2025-09-25 15:00:00 +0900
 categories: [Armo, Backend, Fastify, Prisma, Media]
 tags: [미디어업로드, 이미지파생, sharp, Supabase, Storage, Fastify, Prisma]
 keywords: [“Supabase Storage”, “Sharp”, “이미지 썸네일”, “웹 최적화”, “AVIF 변환”, “이미지 파생”, “Fastify”, “Prisma”]
