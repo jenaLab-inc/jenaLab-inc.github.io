@@ -1,0 +1,643 @@
+---
+title: “Armo 개발 단계 7 — Admin 최소 UI(Next.js /admin) 실전”
+description: “콘솔 대신 Next.js 내부에 /admin 인터페이스를 만들어 콘텐츠 생성·수정·발행을 할 수 있도록 합니다. 로그인, 리스트, 폼, 이미지 업로더, 체크리스트까지 구현하는 과정을 다룹니다.”
+date: 2025-09-25 17:00:00 +0900
+categories: [Armo, Frontend, Next.js, Admin, CMS]
+tags: [Next.js, Admin, JWT, Fastify, Prisma, Supabase, CMS]
+keywords: [“Next.js Admin”, “콘텐츠 관리”, “이미지 업로드”, “JWT 로그인”, “콘텐츠 발행”, “스토리 생성”, “SEO 체크리스트”]
+author: "Jerome Na"
+---
+
+콘솔 대신 Next.js 내부에 /admin 인터페이스를 만들어 콘텐츠 생성·수정·발행을 할 수 있도록 합니다. 로그인, 리스트, 폼, 이미지 업로더, 체크리스트까지 구현하는 과정을 다룹니다.
+
+---
+## 목표
+- /admin 경로에 최소한의 CMS 기능 구축
+- 콘솔이나 DB 툴 없이도 콘텐츠 생성·수정·발행 가능
+- 로그인(Owner만 접근 가능) → 리스트/검색/필터 → 생성·수정 폼 → 이미지 업로더 → 필수 필드 체크리스트 제공
+- DoD: /admin에서 스토리 1건 생성 → 이미지 업로드 → 발행까지 성공
+
+---
+
+## 0. 워크스페이스/러너 준비
+
+루트 package.json
+```json
+{
+  "name": "armo",
+  "private": true,
+  "workspaces": ["admin", "api", "web", "shared"],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:api": "pnpm --filter api dev",
+    "dev:admin": "pnpm --filter admin dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.5.0"
+  }
+}
+```
+
+루트 tsconfig.json
+```json
+{
+  "files": [],
+  "references": [
+    { "path": "shared" },
+    { "path": "api" },
+    { "path": "admin" },
+    { "path": "web" }
+  ]
+}
+```
+
+러너는 turbo 추천(병렬 dev). monorepo가 이미 있으면 스킵해도 됨.
+
+## 1. shared/에 공통 타입/스키마/유틸 묶기
+
+목표: admin과 api가 동일 DTO/Zod 스키마를 공유 → 이중정의/불일치 방지.
+
+```bash
+shared/
+  src/
+    dto/
+      content.ts      // Story/Journal … Create/Update DTO + zod
+      schedule.ts     // publishAt dto
+    types/
+      content.ts      // Status, ModelName 등 enum/type
+    http/
+      axios.ts        // axios 인스턴스 헬퍼(기본형)
+  package.json
+  tsconfig.json
+```
+
+shared/src/http/axios.ts
+```ts
+import axios from 'axios'
+export function makeHttp(baseURL: string) {
+  const http = axios.create({ baseURL, timeout: 15000 })
+  http.interceptors.response.use(
+    r => r,
+    err => {
+      const status = err.response?.status
+      const message = err.response?.data?.message || err.response?.data?.error || err.message
+      return Promise.reject(Object.assign(new Error(message), { status, payload: err.response?.data }))
+    }
+  )
+  return http
+}
+```
+
+shared/src/dto/content.ts
+```ts
+import { z } from 'zod'
+export const Status = z.enum(['draft','scheduled','published'])
+export const createStoryDto = z.object({
+  title: z.string().min(1),
+  body: z.string().optional(),
+  type: z.string().optional()
+})
+export const updateStoryDto = z.object({
+  title: z.string().min(1).optional(),
+  body: z.string().optional(),
+  type: z.string().optional()
+})
+export type CreateStory = z.infer<typeof createStoryDto>
+export type UpdateStory = z.infer<typeof updateStoryDto>
+```
+
+## 2. api/(Fastify) CORS & 환경 정리
+
+api/.env
+```ts
+PORT=3100
+# …이미 있는 DB/Supabase 키들…
+CORS_ORIGIN=http://localhost:3000
+```
+
+CORS:
+```ts
+import fastifyCors from '@fastify/cors'
+app.register(fastifyCors, {
+  origin: process.env.CORS_ORIGIN,
+  credentials: false
+})
+```
+
+인증을 백엔드 쿠키로 할 계획이면 credentials:true + Admin 쪽 axios에서 withCredentials:true.
+
+## 3. admin/ 프로젝트 기본 구성
+
+admin/.env.local
+```ts
+NEXT_PUBLIC_API_BASE=http://localhost:3100
+JWT_SECRET=change_me
+```
+
+admin/package.json
+```json
+{
+  "name": "@armo/admin",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@armo/shared": "workspace:*",
+    "axios": "^1.7.2",
+    ...
+  }
+}
+```
+
+admin/tsconfig.json(paths)
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      ...
+      "@armo/shared/*": ["../shared/src/*"]
+    }
+  }
+}
+```
+
+## 4. Admin 인증(JWT 쿠키, Owner 전용)
+
+admin/middleware.ts
+```ts
+import { NextResponse } from 'next/server'
+import { jwtVerify } from 'jose'
+
+export async function middleware(req: any) {
+  const { pathname, origin } = req.nextUrl
+  if (!pathname.startsWith('/admin')) return NextResponse.next()
+
+  const token = req.cookies.get('토큰키')?.value
+  if (!token) return NextResponse.redirect(new URL('/login', origin))
+
+  try {
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
+    await jwtVerify(token, secret)
+    return NextResponse.next()
+  } catch {
+    return NextResponse.redirect(new URL('/login', origin))
+  }
+}
+```
+
+admin/app/login/page.tsx — 간단 로그인 폼
+```ts
+'use client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { apiPost } from '@/lib/api';
+import { setAuthToken } from '@armo/shared';
+
+export default function LoginPage() {
+  const [email, setEmail] = useState('owner@armo.dev');
+  const [password, setPassword] = useState('');
+  const [err, setErr] = useState('');
+  const router = useRouter();
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setErr('');
+    try {
+      const res = await apiPost<{
+        success: boolean;
+        access_token: string;
+        token_type: string;
+        user: { id: string; email: string; role: string };
+      }>('login api url', { email, password });
+
+      if (res.success && res.access_token) {
+        // Bearer 토큰 저장
+        setAuthToken(res.access_token);
+        router.replace('/admin/stories');
+      }
+    } catch (error: any) {
+      setErr(error.message || '로그인 실패');
+    }
+  }
+
+  return (
+    <main className="p-8 max-w-sm mx-auto">
+      <h1 className="text-xl font-semibold mb-4">Admin 로그인</h1>
+      <form onSubmit={onSubmit} className="space-y-3">
+        <input
+          className="border p-2 w-full"
+          placeholder="이메일"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          className="border p-2 w-full"
+          placeholder="비밀번호"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        {err && <p className="text-red-600 text-sm">{err}</p>}
+        <button className="bg-black text-white px-4 py-2 rounded">로그인</button>
+      </form>
+    </main>
+  );
+}
+
+```
+
+## 5. Admin axios 인스턴스(공용)
+
+admin/lib/http.ts
+```ts
+import { makeHttp } from '@armo/shared/http'
+export const http = makeHttp(process.env.NEXT_PUBLIC_API_BASE!)
+```
+admin/lib/api.ts
+```ts
+import { http } from './http'
+export const apiGet = <T=any>(p:string, params?:any)=> http.get<T>(p,{params}).then(r=>r.data)
+export const apiPost = <T=any>(p:string,b?:any)=> http.post<T>(p,b).then(r=>r.data)
+export const apiPatch = <T=any>(p:string,b?:any)=> http.patch<T>(p,b).then(r=>r.data)
+export const apiDel =  <T=any>(p:string)=> http.delete<T>(p).then(r=>r.data)
+export const apiUpload = <T=any>(p:string, form:FormData, params?:any)=> http.post<T>(p, form, { params }).then(r=>r.data)
+```
+
+## 6. /admin 기본 레이아웃 & 네비
+
+admin/app/admin/layout.tsx 
+```ts
+import LogoutButton from '@/components/LogoutButton';
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="min-h-screen grid grid-cols-[240px_1fr]">
+      <aside className="border-r p-4 space-y-2">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="font-semibold">Armo Admin</h2>
+          <LogoutButton />
+        </div>
+        <nav className="flex flex-col gap-2">
+          <a href="/admin/stories">스토리</a>
+          <a href="/admin/journals">저널</a>
+          <a href="/admin/artists">작가</a>
+          <a href="/admin/artworks">작품</a>
+          <a href="/admin/goods">굿즈</a>
+          <a href="/admin/packages">패키지</a>
+          <a href="/admin/faqs">FAQ</a>
+        </nav>
+      </aside>
+      <main className="p-6">{children}</main>
+    </div>
+  );
+}
+```
+
+admin/app/admin/page.tsx
+```ts
+export default function AdminHome() {
+  return (
+    <div>
+      <h1 className="text-xl font-semibold mb-4">대시보드</h1>
+      <p>/admin에서 콘텐츠를 생성·수정·발행할 수 있습니다.</p>
+    </div>
+  );
+}
+```
+
+## 7. 스토리 리스트/검색/필터(SWR + axios)
+
+admin/app/admin/stories/page.tsx
+```ts
+'use client';
+import useSWR from 'swr';
+import { useState } from 'react';
+import { apiGet } from '@/lib/api';
+
+const pick = (o: any) => Object.fromEntries(Object.entries(o).filter(([, v]) => v));
+
+export default function StoryList() {
+  const [q, setQ] = useState('');
+  const [status, setStatus] = useState('');
+  const { data, mutate, isLoading } = useSWR(['/api/stories', q, status], ([p, q, s]) =>
+    apiGet(p, pick({ q, status: s }))
+  );
+
+  return (
+    <div>
+      <div className="flex justify-between mb-4">
+        <h1 className="text-lg font-semibold">스토리</h1>
+        <a className="bg-black text-white px-3 py-2 rounded" href="/admin/stories/new">
+          새 스토리
+        </a>
+      </div>
+      <div className="flex gap-2 mb-4">
+        <input
+          className="border p-2"
+          placeholder="검색"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+        <select className="border p-2" value={status} onChange={(e) => setStatus(e.target.value)}>
+          <option value="">전체</option>
+          <option value="draft">draft</option>
+          <option value="scheduled">scheduled</option>
+          <option value="published">published</option>
+        </select>
+        <button className="border px-3" onClick={() => mutate()}>
+          적용
+        </button>
+      </div>
+
+      {isLoading ? (
+        <p>로딩…</p>
+      ) : (
+        <table className="w-full text-sm border">
+          <thead>
+            <tr>
+              <th className="p-2 text-left">제목</th>
+              <th>상태</th>
+              <th>발행시각</th>
+              <th>액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data?.map((s: any) => (
+              <tr key={s.id} className="border-t">
+                <td className="p-2">{s.title}</td>
+                <td className="text-center">{s.status}</td>
+                <td className="text-center">{s.publishAt ?? '-'}</td>
+                <td className="text-center">
+                  <a className="underline" href={`/admin/stories/${s.id}`}>
+                    수정
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+```
+
+## 8. 생성 폼 + 업로더 + 체크리스트
+
+admin/components/ImageUploader.tsx
+```tsx
+'use client';
+import { useState } from 'react';
+import { apiUpload } from '@/lib/api';
+
+export default function ImageUploader({
+  onDone,
+  bucket = 'common',
+}: {
+  onDone: (path: string) => void;
+  bucket?: 'artworks' | 'goods' | 'common';
+}) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  async function onFile(e: any) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const form = new FormData();
+    form.append('file', f);
+    try {
+      setBusy(true);
+      const r = await apiUpload('/api/media/upload', form, { bucket });
+      onDone(r.asset.path);
+    } catch (e: any) {
+      setErr(e.message || '업로드 실패');
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div className="space-y-2">
+      <input type="file" onChange={onFile} disabled={busy} />
+      {busy && <p>업로드 중…</p>}
+      {err && <p className="text-red-600">{err}</p>}
+    </div>
+  );
+}
+```
+
+admin/app/admin/stories/new/page.tsx
+```ts
+'use client';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import ImageUploader from '@/components/ImageUploader';
+import { apiPost } from '@/lib/api';
+
+export default function NewStory() {
+  const [title, setTitle] = useState('');
+  const [type, setType] = useState('');
+  const [body, setBody] = useState('');
+  const [seo, setSeo] = useState('');
+  const [img, setImg] = useState('');
+  const [err, setErr] = useState('');
+  const router = useRouter();
+  function ok() {
+    return !!title && !!img && !!body && seo.length >= 50 && seo.length <= 160;
+  }
+
+  async function save() {
+    try {
+      const finalBody = img ? `![cover](/media/${img})\n\n${body}` : body;
+      await apiPost('스토리 API URL', { title, body: finalBody, type });
+      router.replace('/admin/stories');
+    } catch (e: any) {
+      setErr(e.message);
+    }
+  }
+
+  return (
+    <div className="max-w-2xl">
+      <h1 className="text-lg font-semibold mb-4">새 스토리</h1>
+      <input
+        className="border p-2 w-full mb-2"
+        placeholder="제목"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <select className="border p-2 mb-2" value={type} onChange={(e) => setType(e.target.value)}>
+        <option value="">타입 선택</option>
+        <option value="brand">brand</option>
+        <option value="artwork">artwork</option>
+        <option value="motif">motif</option>
+        <option value="packaging">packaging</option>
+      </select>
+      <label className="block font-medium">이미지 업로드</label>
+      <ImageUploader onDone={setImg} bucket="common" />
+      {img && <p className="text-sm text-gray-600">업로드됨: {img}</p>}
+      <textarea
+        className="border p-2 w-full h-40 mb-2"
+        placeholder="본문"
+        value={body}
+        onChange={(e) => setBody(e.target.value)}
+      />
+      <input
+        className="border p-2 w-full mb-2"
+        placeholder="SEO 설명(50~160자)"
+        value={seo}
+        onChange={(e) => setSeo(e.target.value)}
+      />
+      <ul className="text-sm mb-2">
+        <li className={title ? 'text-green-600' : 'text-red-600'}>{title ? '✓' : '✗'} 제목</li>
+        <li className={img ? 'text-green-600' : 'text-red-600'}>{img ? '✓' : '✗'} 대표 이미지</li>
+        <li className={body ? 'text-green-600' : 'text-red-600'}>{body ? '✓' : '✗'} 본문</li>
+        <li className={seo.length >= 50 && seo.length <= 160 ? 'text-green-600' : 'text-red-600'}>
+          {seo.length >= 50 && seo.length <= 160 ? '✓' : '✗'} SEO 설명(50~160자)
+        </li>
+      </ul>
+      {err && <p className="text-red-600">{err}</p>}
+      <button
+        className="bg-black text-white px-4 py-2 rounded disabled:opacity-50"
+        disabled={!ok()}
+        onClick={save}
+      >
+        초안 저장
+      </button>
+    </div>
+  );
+}
+```
+
+## 9. 수정/발행/예약 화면(axios)
+
+admin/app/admin/stories/[id]/page.tsx
+```ts
+'use client';
+import useSWR from 'swr';
+import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { apiGet, apiPatch, apiPost } from '@/lib/api';
+import ImageUploader from '@/components/ImageUploader';
+
+export default function EditStory() {
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const { data: story, mutate } = useSWR(`/api/stories/${id}`, (k) => apiGet(k));
+  const [title, setTitle] = useState('');
+  const [type, setType] = useState('');
+  const [body, setBody] = useState('');
+  const [publishAt, setPublishAt] = useState('');
+  const [err, setErr] = useState('');
+
+  useEffect(() => {
+    if (story) {
+      setTitle(story.title || '');
+      setType(story.type || '');
+      setBody(story.body || '');
+    }
+  }, [story]);
+  const onUploaded = (p: string) => setBody((prev) => `![image](/media/${p})\n\n${prev}`);
+
+  async function save() {
+    try {
+      await apiPatch(`스토리 상세 API URL`, { title, type, body });
+      await mutate();
+    } catch (e: any) {
+      setErr(e.message);
+    }
+  }
+  async function publish() {
+    try {
+      await apiPost(`스토리 발행 API URL`, {});
+      router.replace('/admin/stories');
+    } catch (e: any) {
+      setErr(e.message);
+    }
+  }
+  async function schedule() {
+    try {
+      await apiPost(`스토리 예약 API URL`, { publishAt });
+      router.replace('/admin/stories');
+    } catch (e: any) {
+      setErr(e.message);
+    }
+  }
+
+  if (!story) return <p>로딩…</p>;
+  return (
+    <div className="max-w-2xl">
+      <h1 className="text-lg font-semibold mb-3">스토리 수정</h1>
+      <input
+        className="border p-2 w-full mb-2"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <select className="border p-2 mb-2" value={type} onChange={(e) => setType(e.target.value)}>
+        <option value="">타입 선택</option>
+        <option value="brand">brand</option>
+        <option value="artwork">artwork</option>
+        <option value="motif">motif</option>
+        <option value="packaging">packaging</option>
+      </select>
+      <label className="block font-medium">이미지 업로드</label>
+      <ImageUploader onDone={onUploaded} bucket="common" />
+      <textarea
+        className="border p-2 w-full h-64 mb-2"
+        value={body}
+        onChange={(e) => setBody(e.target.value)}
+      />
+      {err && <p className="text-red-600">{err}</p>}
+      <div className="flex gap-2">
+        <button className="border px-3 py-2" onClick={save}>
+          저장
+        </button>
+        <button className="bg-black text-white px-3 py-2 rounded" onClick={publish}>
+          즉시 발행
+        </button>
+      </div>
+      <div className="mt-6 border-t pt-4">
+        <h3 className="font-semibold mb-2">예약 발행</h3>
+        <input
+          className="border p-2"
+          placeholder="2025-10-01T10:00:00+09:00"
+          value={publishAt}
+          onChange={(e) => setPublishAt(e.target.value)}
+        />
+        <button className="ml-2 border px-3 py-2" onClick={schedule}>
+          예약
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+## 10. 로컬 구동 스텝(DoD 달성 루틴)
+
+1.	API 실행
+```bash
+pnpm dev:api (포트 3100, CORS origin http://localhost:3000 확인)
+```
+
+2.	Admin 실행
+```bash
+pnpm dev:admin
+```
+
+3.	/admin 플로우
+
+- http://localhost:3000/login → 로그인
+- /admin/stories/new → 제목/본문/이미지 업로드 → 초안 저장
+- 리스트에서 방금 항목 클릭 → 수정 화면
+- 즉시 발행 또는 publishAt 넣고 예약
+- 리스트에서 status 확인(예약이면 ⑤ 워커가 자동 발행)
+
+✅ DoD: /admin에서 스토리 1건 생성 → 이미지 업로드 → 발행 완료.
