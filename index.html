@@ -2,94 +2,78 @@
 layout: default
 ---
 
-<div class="teaserimage">
-    <div class="teaserimage-image" {% if site.cover %}style="background-image: url({{ site.cover | prepend: site.baseurl }})"{% endif %}>
-        Teaser Image
-    </div>
-</div>
+<div class="home">
+  <div class="home-header">
+    <h1 class="home-title">{{ site.title }}</h1>
+    <p class="home-description">{{ site.description }}</p>
+  </div>
 
-<header class="blog-header">
-    {% if site.logo %}
-      <a class="blog-logo" href="{{site.url}}{{site.baseurl}}" style="background-image: url('{{ site.logo | prepend: site.baseurl }}')">{{ site.title }}</a>
-    {% endif %}
-    <h1 class="blog-title">{{ site.title }}</h1>
-    <h2 class="blog-description">{{ site.description }}</h2>
-    <div class="custom-links">
-      {% for social in site.social %}
-        {% if social.url %}
-            <a class="icon-{{ social.icon }}" href="{{ social.url }}" {% if social.desc %} title="{{ social.desc }}"{% endif %}">
-              <i class="fa fa-{{ social.icon }}"></i>
-            </a>
-            &nbsp;&nbsp;·&nbsp;&nbsp;
-        {% endif %}
-      {% endfor %}
-      <a href={{ "/about/" | prepend: site.baseurl }}>About</a>
-    </div>
-</header>
-
-
-<main class="content" role="main">
-
+  <main class="post-list" role="main">
     {% if site.tags.featured %}
-    <h5 class="index-headline featured"><span>Featured</span></h5>
-
-    <div class="container featured">
+    <section class="post-list-section">
+      <h2 class="post-list-heading">Featured</h2>
       {% for post in site.tags.featured %}
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting" role="article">
-          <div class="article-item">
-            <header class="post-header">
-              <h2 class="post-title" itemprop="name"><a href="{{ post.url | prepend: site.baseurl }}" itemprop="url">{{ post.title }}</a></h2>
-            </header>
-            <section class="post-excerpt" itemprop="description">
-              <p>{{ post.content | strip_html | truncatewords: 50 }}</p>
-            </section>
-            <div class="post-meta">
-              <time datetime="{{ post.date | date_to_long_string }}">{{ post.date | date_to_long_string }}</time>
-  <!--            <span class="post-tags-set">on {{#foreach tags}}<span class="post-tag-{{slug}}">{{#if @first}}{{else}}, {{/if}}<a href="/tag/{{slug}}">{{name}}</a></span>{{/foreach}}</span>-->
-            </div>
+        <article class="post-item" itemscope itemtype="http://schema.org/BlogPosting" role="article">
+          <div class="post-item-meta">
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+            {% if post.categories.size > 0 %}
+              <span class="post-item-category">{{ post.categories | first }}</span>
+            {% endif %}
           </div>
+          <h3 class="post-item-title" itemprop="name">
+            <a href="{{ post.url | prepend: site.baseurl }}" itemprop="url">{{ post.title }}</a>
+          </h3>
+          <p class="post-item-excerpt" itemprop="description">{{ post.content | strip_html | truncatewords: 30 }}</p>
         </article>
       {% endfor %}
-    </div>
-
-    <h5 class="index-headline normal"><span>Regular</span></h5>
+    </section>
     {% endif %}
 
-    <div class="cf frame">
+    <section class="post-list-section">
+      {% if site.tags.featured %}
+        <h2 class="post-list-heading">All Posts</h2>
+      {% endif %}
       {% for post in paginator.posts %}
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting" role="article">
-          <div class="article-item">
-            <header class="post-header">
-              <h2 class="post-title" itemprop="name"><a href="{{ post.url | prepend: site.baseurl }}" itemprop="url">{{ post.title }}</a></h2>
-            </header>
-            <section class="post-excerpt" itemprop="description">
-              <p>{{ post.excerpt | strip_html | truncatewords: 50 }}</p>
-            </section>
-            <div class="post-meta">
-              <time datetime="{{ post.date | date_to_long_string }}">{{ post.date | date_to_long_string }}</time>
-<!--            <span class="post-tags-set">on {{#foreach tags}}<span class="post-tag-{{slug}}">{{#if @first}}{{else}}, {{/if}}<a href="/tag/{{slug}}">{{name}}</a></span>{{/foreach}}</span>-->
-            </div>
+        <article class="post-item" itemscope itemtype="http://schema.org/BlogPosting" role="article">
+          <div class="post-item-meta">
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+            {% if post.categories.size > 0 %}
+              <span class="post-item-category">{{ post.categories | first }}</span>
+            {% endif %}
           </div>
+          <h3 class="post-item-title" itemprop="name">
+            <a href="{{ post.url | prepend: site.baseurl }}" itemprop="url">{{ post.title }}</a>
+          </h3>
+          <p class="post-item-excerpt" itemprop="description">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
         </article>
       {% endfor %}
-    </div>
+    </section>
 
     <nav class="pagination" role="navigation">
       {% if paginator.next_page %}
-        <a class="newer-posts" href={{ "/page" | prepend: site.baseurl | append: paginator.next_page }}>&larr; Older posts</a>
+        <a class="pagination-link" href="{{ "/page" | prepend: site.baseurl | append: paginator.next_page }}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Older
+        </a>
+      {% else %}
+        <span></span>
       {% endif %}
-      <span class="page-number">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
+      <span class="pagination-info">{{ paginator.page }} / {{ paginator.total_pages }}</span>
       {% if paginator.previous_page %}
         {% if paginator.page == 2 %}
-          <a class="older-posts" href={{ "/" | prepend: site.baseurl }}>Newer posts &rarr;</a>
+          <a class="pagination-link" href="{{ "/" | prepend: site.baseurl }}">
+            Newer
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
         {% else %}
-          <a class="older-posts" href={{ "/page" | prepend: site.baseurl | append: paginator.previous_page }}>Newer posts &rarr;</a>
+          <a class="pagination-link" href="{{ "/page" | prepend: site.baseurl | append: paginator.previous_page }}">
+            Newer
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
         {% endif %}
+      {% else %}
+        <span></span>
       {% endif %}
     </nav>
-
-
-    <!-- {{!! After all the posts, we have the previous/next pagination links }}
-    {{pagination}} -->
-
-</main>
+  </main>
+</div>

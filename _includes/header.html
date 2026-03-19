@@ -1,6 +1,18 @@
 <!-- header start -->
-
-{% if site.float_logo %}
-  <a href="{{ site.url }}{{ site.baseurl }}" class="logo-readium" aria-label="Home"><span class="logo" style="background-image: url({{ site.logo }})"></span></a>
-{% endif %}
+<header class="site-header">
+  <div class="site-header-inner">
+    <a href="{{ site.url }}{{ site.baseurl }}/" class="site-header-logo">
+      {% if site.logo %}
+        <img src="{{ site.logo | prepend: site.baseurl }}" alt="{{ site.title }}" width="32" height="32">
+      {% endif %}
+      <span>{{ site.title }}</span>
+    </a>
+    <nav class="site-header-nav">
+      <a href="{{ "/about/" | prepend: site.baseurl }}">About</a>
+      <a href="{{ "/feed.xml" | prepend: site.baseurl }}" class="site-header-rss" aria-label="RSS Feed">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+      </a>
+    </nav>
+  </div>
+</header>
 <!-- header end -->
