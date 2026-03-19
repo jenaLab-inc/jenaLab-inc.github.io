@@ -41,14 +41,14 @@
   --font-mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', Consolas, monospace
 
   // Fluid type scale
-  --text-xs: #{clamp(0.6875rem, 0.65rem + 0.15vw, 0.75rem)}
-  --text-sm: #{clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem)}
-  --text-base: #{clamp(0.9375rem, 0.875rem + 0.25vw, 1rem)}
-  --text-lg: #{clamp(1.0625rem, 1rem + 0.25vw, 1.125rem)}
-  --text-xl: #{clamp(1.125rem, 1rem + 0.5vw, 1.25rem)}
-  --text-2xl: #{clamp(1.375rem, 1.25rem + 0.5vw, 1.5rem)}
-  --text-3xl: #{clamp(1.5rem, 1.25rem + 1vw, 1.875rem)}
-  --text-4xl: #{clamp(2.25rem, 1.5rem + 3vw, 3rem)}
+  --text-xs: #{"clamp(0.6875rem, 0.65rem + 0.15vw, 0.75rem)"}
+  --text-sm: #{"clamp(0.8125rem, 0.78rem + 0.15vw, 0.875rem)"}
+  --text-base: #{"clamp(0.9375rem, 0.875rem + 0.25vw, 1rem)"}
+  --text-lg: #{"clamp(1.0625rem, 1rem + 0.25vw, 1.125rem)"}
+  --text-xl: #{"clamp(1.125rem, 1rem + 0.5vw, 1.25rem)"}
+  --text-2xl: #{"clamp(1.375rem, 1.25rem + 0.5vw, 1.5rem)"}
+  --text-3xl: #{"clamp(1.5rem, 1.25rem + 1vw, 1.875rem)"}
+  --text-4xl: #{"clamp(2.25rem, 1.5rem + 3vw, 3rem)"}
 
   // Spacing
   --space-1: 4px
@@ -75,7 +75,7 @@
   --content-width: 720px
   --wide-width: 1080px
   --header-height: 64px
-  --side-padding: #{clamp(16px, 4vw, 32px)}
+  --side-padding: #{"clamp(16px, 4vw, 32px)"}
 
 // ===== DARK MODE =====
 @media (prefers-color-scheme: dark)
@@ -138,15 +138,15 @@ img
   z-index: 100
   background-color: var(--bg-base)
   border-bottom: 1px solid var(--border-soft)
-  backdrop-filter: #{blur(16px) saturate(1.2)}
-  -webkit-backdrop-filter: #{blur(16px) saturate(1.2)}
+  backdrop-filter: #{"blur(16px) saturate(1.2)"}
+  -webkit-backdrop-filter: #{"blur(16px) saturate(1.2)"}
 
-  @supports (backdrop-filter: #{blur(16px)})
+  @supports (backdrop-filter: #{"blur(16px)"})
     background-color: rgba(245, 245, 243, 0.9)
 
 @media (prefers-color-scheme: dark)
   .site-header
-    @supports (backdrop-filter: #{blur(16px)})
+    @supports (backdrop-filter: #{"blur(16px)"})
       background-color: rgba(27, 27, 27, 0.9)
 
 .site-header-inner
@@ -207,7 +207,7 @@ img
   padding: 0 var(--side-padding)
 
 .home-header
-  padding: #{clamp(64px, 8vw, 96px)} 0 #{clamp(48px, 6vw, 64px)}
+  padding: #{"clamp(64px, 8vw, 96px)"} 0 #{"clamp(48px, 6vw, 64px)"}
 
 .home-title
   font-family: var(--font-display)
@@ -374,7 +374,7 @@ img
   padding: 0 var(--side-padding)
 
 .post-article-header
-  padding: #{clamp(48px, 6vw, 80px)} 0 var(--space-6)
+  padding: #{"clamp(48px, 6vw, 80px)"} 0 var(--space-6)
 
 .post-article-meta
   display: flex
@@ -741,4 +741,4 @@ pre
 // ===== LEGACY COMPAT =====
 
 .page-content
-  min-height: #{calc(100vh - var(--header-height) - 120px)}
+  min-height: #{"calc(100vh - var(--header-height) - 120px)"}
