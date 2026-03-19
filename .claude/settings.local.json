@@ -7,7 +7,10 @@
       "Read(//Users/byeongmukna/Documents/project/source/jenalab-site/**)",
       "Read(//Users/byeongmukna/Documents/project/source/**)",
       "Bash(grep -E \"\\\\.\\(md|js|mjs|tsx|css\\)$|^d\")",
-      "Bash(find /Users/byeongmukna/Documents/project/source/jenalab-site/app/blog/[slug]/ -type f)"
+      "Bash(find /Users/byeongmukna/Documents/project/source/jenalab-site/app/blog/[slug]/ -type f)",
+      "Bash(grep -E \"\\\\.\\(png|jpg|jpeg|svg|ico\\)$\")",
+      "Bash(cp /Users/byeongmukna/Documents/project/source/jenalab-site/public/jenalab_horizontal.png /Users/byeongmukna/Documents/project/source/jenaLab-inc.github.io/assets/images/jenalab_horizontal.png)",
+      "Bash(cp /Users/byeongmukna/Documents/project/source/jenalab-site/public/jenalab.ico /Users/byeongmukna/Documents/project/source/jenaLab-inc.github.io/assets/images/favicon.ico)"
     ]
   }
 }

@@ -37,7 +37,7 @@
   {% if page.date %}<meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">{% endif %}
 
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}"/>
-  <link rel="shortcut icon" href="{{ "/assets/images/favicon.png" | prepend: site.baseurl }}" type="image/png"/>
+  <link rel="icon" href="{{ "/assets/images/favicon.ico" | prepend: site.baseurl }}" type="image/x-icon"/>
 
   <!-- Fonts: Playfair Display (display) + Inter (body EN) + Pretendard (body KR) -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
