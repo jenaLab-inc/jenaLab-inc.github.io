@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l /Users/byeongmukna/Documents/project/source/jenaLab-inc.github.io/_posts/*)",
+      "Bash(bundle exec jekyll build)"
+    ]
+  }
+}
