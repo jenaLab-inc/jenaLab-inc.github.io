@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(wc -l /Users/byeongmukna/Documents/project/source/jenaLab-inc.github.io/_posts/*)",
-      "Bash(bundle exec jekyll build)"
+      "Bash(bundle exec jekyll build)",
+      "WebFetch(domain:jenalab-inc.github.io)",
+      "Read(//Users/byeongmukna/Documents/project/source/jenalab-site/**)",
+      "Read(//Users/byeongmukna/Documents/project/source/**)",
+      "Bash(grep -E \"\\\\.\\(md|js|mjs|tsx|css\\)$|^d\")",
+      "Bash(find /Users/byeongmukna/Documents/project/source/jenalab-site/app/blog/[slug]/ -type f)"
     ]
   }
 }

@@ -7,34 +7,38 @@
 
 @import 'syntax-highlighting'
 
-// ===== DESIGN TOKENS (JenaLab Design System — Quiet Urban Wash) =====
+// ===== DESIGN TOKENS (Matched to jenalab-site) =====
 
 \:root
-  // Base
-  --bg-base: #FAFAF7
-  --surface: #F4F1EB
-  --border-soft: #E2DDD5
-  --text-primary: #2C2A26
-  --text-secondary: #6B6560
+  // Base — matches jenalab-site globals.css
+  --bg-base: #F5F5F3
+  --surface: #FFFFFF
+  --border-soft: #DDD5C3
+  --text-primary: #1B1B1B
+  --text-secondary: #4A4A4A
   --text-muted: #9E9890
 
-  // Atmospheric
-  --warm-paper: #F7F3EC
-  --rice-white: #FBF8F2
-  --soft-plaster: #EEE7DD
-  --stone-linen: #D8CFC3
-  --slate-teal: #677983
-  --rain-blue: #9EAFB5
-  --amber-glow: #E0C38A
-  --soft-brass: #B08B57
-  --ink-charcoal: #2F2A27
-  --espresso: #241D1A
-  --moss-green: #73806B
-  --deep-herb: #586250
+  // Brand
+  --primary: #3A8B66
+  --primary-light: #4A9B76
+  --secondary: #CBBE9F
+  --accent: #4466AA
 
-  // Typography
-  --font-body: 'Pretendard Variable', 'Pretendard', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif
-  --font-display: 'Noto Serif KR', Georgia, serif
+  // Atmospheric (narrative layers)
+  --layer-capture: #677983
+  --layer-tell: #586250
+  --layer-connect: #B08B57
+  --amber-glow: #E0C38A
+
+  // Dark surfaces
+  --ink-charcoal: #2F2A27
+  --warm-paper: #F7F3EC
+  --walnut-shadow: #4E413A
+
+  // Typography — matches jenalab-site
+  --font-body: 'Inter', 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif
+  --font-display: 'Playfair Display', Georgia, serif
+  --font-mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', Consolas, monospace
 
   // Fluid type scale
   --text-xs: clamp(0.6875rem, 0.65rem + 0.15vw, 0.75rem)
@@ -44,7 +48,7 @@
   --text-xl: clamp(1.125rem, 1rem + 0.5vw, 1.25rem)
   --text-2xl: clamp(1.375rem, 1.25rem + 0.5vw, 1.5rem)
   --text-3xl: clamp(1.5rem, 1.25rem + 1vw, 1.875rem)
-  --text-4xl: clamp(1.75rem, 1.25rem + 2vw, 2.25rem)
+  --text-4xl: clamp(2.25rem, 1.5rem + 3vw, 3rem)
 
   // Spacing
   --space-1: 4px
@@ -57,39 +61,41 @@
   --space-8: 64px
   --space-9: 96px
 
-  // Radius
+  // Radius — matches jenalab-site (0.5rem base)
   --radius-sm: 4px
-  --radius-md: 8px
-  --radius-lg: 16px
+  --radius-md: 6px
+  --radius-lg: 8px
 
-  // Shadows (warm)
-  --shadow-sm: 0 1px 3px rgba(47,42,39,0.06)
-  --shadow-md: 0 4px 12px rgba(47,42,39,0.08)
-  --shadow-lg: 0 8px 32px rgba(47,42,39,0.12)
+  // Shadows
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05)
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.07)
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.08)
 
   // Layout
-  --content-width: 680px
-  --wide-width: 960px
+  --content-width: 720px
+  --wide-width: 1080px
   --header-height: 64px
+  --side-padding: clamp(16px, 4vw, 32px)
 
 // ===== DARK MODE =====
 @media (prefers-color-scheme: dark)
   \:root
-    --bg-base: #201B19
-    --surface: #2A2320
-    --border-soft: #3D3530
-    --text-primary: #F3EBDD
-    --text-secondary: #C9BFB1
+    --bg-base: #1B1B1B
+    --surface: #242424
+    --border-soft: #3A3A3A
+    --text-primary: #F5F5F3
+    --text-secondary: #C0C0BC
     --text-muted: #8D8278
-    --warm-paper: #261F1C
-    --rice-white: #1C1714
-    --soft-plaster: #332B27
-    --stone-linen: #4E413A
-    --slate-teal: #9EAFB5
-    --rain-blue: #8EA0AA
-    --amber-glow: #D8B16D
-    --soft-brass: #C8A46A
-    --ink-charcoal: #F3EBDD
+    --primary: #4A9B76
+    --primary-light: #5AAB86
+    --secondary: #8A7D64
+    --accent: #6688CC
+    --layer-capture: #9EAFB5
+    --layer-tell: #A8B39C
+    --layer-connect: #C8A46A
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.2)
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -2px rgba(0,0,0,0.2)
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -4px rgba(0,0,0,0.2)
 
 // ===== RESET & BASE =====
 
@@ -114,17 +120,17 @@ body
   -moz-osx-font-smoothing: grayscale
 
 a
-  color: var(--slate-teal)
+  color: var(--primary)
   text-decoration: none
   transition: color 0.2s ease
   &:hover
-    color: var(--soft-brass)
+    color: var(--primary-light)
 
 img
   max-width: 100%
   height: auto
 
-// ===== SITE HEADER (Global Nav) =====
+// ===== SITE HEADER =====
 
 .site-header
   position: sticky
@@ -132,21 +138,21 @@ img
   z-index: 100
   background-color: var(--bg-base)
   border-bottom: 1px solid var(--border-soft)
-  backdrop-filter: blur(12px)
-  -webkit-backdrop-filter: blur(12px)
+  backdrop-filter: blur(16px) saturate(1.2)
+  -webkit-backdrop-filter: blur(16px) saturate(1.2)
 
-  @supports (backdrop-filter: blur(12px))
-    background-color: rgba(250, 250, 247, 0.85)
+  @supports (backdrop-filter: blur(16px))
+    background-color: rgba(245, 245, 243, 0.9)
 
 @media (prefers-color-scheme: dark)
   .site-header
-    @supports (backdrop-filter: blur(12px))
-      background-color: rgba(32, 27, 25, 0.85)
+    @supports (backdrop-filter: blur(16px))
+      background-color: rgba(27, 27, 27, 0.9)
 
 .site-header-inner
   max-width: var(--wide-width)
   margin: 0 auto
-  padding: 0 var(--space-5)
+  padding: 0 var(--side-padding)
   height: var(--header-height)
   display: flex
   align-items: center
@@ -159,53 +165,57 @@ img
   text-decoration: none
   color: var(--text-primary)
   font-weight: 600
-  font-size: var(--text-sm)
+  font-size: var(--text-base)
   letter-spacing: -0.01em
   &:hover
     color: var(--text-primary)
   img
-    width: 32px
-    height: 32px
+    width: 28px
+    height: 28px
     border-radius: var(--radius-sm)
     object-fit: cover
 
 .site-header-nav
   display: flex
   align-items: center
-  gap: var(--space-5)
+  gap: var(--space-2)
   a
     color: var(--text-secondary)
     font-size: var(--text-sm)
     font-weight: 500
     text-decoration: none
-    transition: color 0.2s ease
+    padding: var(--space-2) var(--space-3)
+    border-radius: var(--radius-md)
+    transition: color 0.2s ease, background-color 0.2s ease
     &:hover
       color: var(--text-primary)
+      background-color: var(--surface)
   .site-header-rss
     display: flex
     align-items: center
+    padding: var(--space-2)
     color: var(--text-muted)
     &:hover
       color: var(--text-secondary)
+      background-color: var(--surface)
 
 // ===== HOMEPAGE =====
 
 .home
   max-width: var(--wide-width)
   margin: 0 auto
-  padding: 0 var(--space-5)
+  padding: 0 var(--side-padding)
 
 .home-header
-  padding: var(--space-9) 0 var(--space-7)
-  border-bottom: 1px solid var(--border-soft)
+  padding: clamp(64px, 8vw, 96px) 0 clamp(48px, 6vw, 64px)
 
 .home-title
   font-family: var(--font-display)
   font-size: var(--text-4xl)
-  font-weight: 700
+  font-weight: 600
   letter-spacing: -0.02em
   line-height: 1.15
-  margin: 0 0 var(--space-3)
+  margin: 0 0 var(--space-4)
   color: var(--text-primary)
 
 .home-description
@@ -213,68 +223,86 @@ img
   color: var(--text-secondary)
   margin: 0
   line-height: 1.6
+  max-width: 540px
 
 // ===== POST LIST =====
 
 .post-list
   display: block
+  padding-bottom: var(--space-8)
 
 .post-list-section
   padding: 0
+
+.post-item-link
+  display: block
+  text-decoration: none
+  color: inherit
+  &:hover
+    color: inherit
 
 .post-list-heading
   font-family: var(--font-body)
   font-size: var(--text-xs)
   font-weight: 600
   text-transform: uppercase
-  letter-spacing: 0.08em
+  letter-spacing: 0.15em
   color: var(--text-muted)
   margin: 0
-  padding: var(--space-6) 0 var(--space-4)
+  padding: var(--space-6) 0 var(--space-5)
+
+// ===== POST ITEM (Card — matches jenalab-site card pattern) =====
 
 .post-item
-  padding: var(--space-6) 0
-  border-bottom: 1px solid var(--border-soft)
+  background-color: var(--surface)
+  border: 1px solid var(--border-soft)
+  border-radius: var(--radius-lg)
+  padding: var(--space-6)
+  margin-bottom: var(--space-4)
+  box-shadow: var(--shadow-sm)
+  transition: all 0.3s ease
+  &:hover
+    box-shadow: var(--shadow-md)
+    transform: translateY(-2px)
   &:last-child
-    border-bottom: 1px solid var(--border-soft)
+    margin-bottom: 0
 
 .post-item-meta
   display: flex
   align-items: center
   gap: var(--space-3)
-  margin-bottom: var(--space-2)
+  margin-bottom: var(--space-3)
   time
     font-size: var(--text-xs)
     color: var(--text-muted)
     font-variant-numeric: tabular-nums
-    letter-spacing: 0.01em
 
 .post-item-category
   font-size: var(--text-xs)
-  color: var(--slate-teal)
-  font-weight: 500
-  &::before
-    content: '·'
-    margin-right: var(--space-3)
-    color: var(--text-muted)
+  color: var(--primary)
+  font-weight: 600
+  background-color: var(--bg-base)
+  padding: 2px var(--space-2)
+  border-radius: var(--radius-sm)
 
 .post-item-title
   font-family: var(--font-body)
   font-size: var(--text-xl)
   font-weight: 600
-  line-height: 1.35
-  margin: 0 0 var(--space-2)
+  line-height: 1.4
+  margin: 0 0 var(--space-3)
   letter-spacing: -0.01em
   a
     color: var(--text-primary)
     text-decoration: none
-    &:hover
-      color: var(--slate-teal)
+  .post-item-link:hover &,
+  .post-item-link:hover & a
+    color: var(--text-primary)
 
 .post-item-excerpt
   font-size: var(--text-sm)
   color: var(--text-secondary)
-  line-height: 1.6
+  line-height: 1.65
   margin: 0
 
 // ===== PAGINATION =====
@@ -283,7 +311,7 @@ img
   display: flex
   align-items: center
   justify-content: space-between
-  padding: var(--space-7) 0
+  padding: var(--space-5) 0
 
 .pagination-link
   display: inline-flex
@@ -295,47 +323,58 @@ img
   text-decoration: none
   padding: var(--space-2) var(--space-4)
   border: 1px solid var(--border-soft)
-  border-radius: var(--radius-sm)
+  border-radius: var(--radius-lg)
+  background-color: var(--surface)
   transition: all 0.2s ease
   svg
     flex-shrink: 0
   &:hover
     color: var(--text-primary)
-    border-color: var(--stone-linen)
-    background-color: var(--surface)
+    box-shadow: var(--shadow-sm)
+    transform: translateY(-1px)
 
 .pagination-info
   font-size: var(--text-xs)
   color: var(--text-muted)
   font-variant-numeric: tabular-nums
+  font-weight: 500
 
-// ===== SITE FOOTER =====
+// ===== SITE FOOTER (Dark — matches jenalab-site) =====
 
 .site-footer
-  margin: 0 auto
-  padding: var(--space-7) var(--space-5)
-  width: 100%
-  max-width: var(--wide-width)
-  font-size: var(--text-xs)
-  text-align: center
-  color: var(--text-muted)
-  line-height: 1.6
-  border-top: 1px solid var(--border-soft)
+  background-color: var(--ink-charcoal)
+  color: var(--warm-paper)
+  padding: var(--space-8) var(--side-padding)
   a
-    color: var(--text-secondary)
+    color: #9E9890
     text-decoration: none
+    transition: color 0.2s ease
     &:hover
-      color: var(--text-primary)
+      color: var(--warm-paper)
+
+.site-footer .inner
+  max-width: var(--wide-width)
+  margin: 0 auto
+  text-align: center
+
+.site-footer .copyright
+  font-size: var(--text-xs)
+  color: #9E9890
+  margin-bottom: var(--space-2)
+
+.site-footer .poweredby
+  font-size: var(--text-xs)
+  color: #9E9890
 
 // ===== POST ARTICLE =====
 
 .post-article
   max-width: var(--content-width)
   margin: 0 auto
-  padding: 0 var(--space-5)
+  padding: 0 var(--side-padding)
 
 .post-article-header
-  padding: var(--space-8) 0 var(--space-7)
+  padding: clamp(48px, 6vw, 80px) 0 var(--space-6)
 
 .post-article-meta
   display: flex
@@ -350,12 +389,12 @@ img
 
 .post-article-category
   font-size: var(--text-xs)
-  color: var(--slate-teal)
-  font-weight: 500
-  &::before
-    content: '·'
-    margin-right: var(--space-3)
-    color: var(--text-muted)
+  color: var(--primary)
+  font-weight: 600
+  background-color: var(--surface)
+  border: 1px solid var(--border-soft)
+  padding: 2px var(--space-2)
+  border-radius: var(--radius-sm)
 
 .post-article-reading
   font-size: var(--text-xs)
@@ -363,36 +402,39 @@ img
   &::before
     content: '·'
     margin-right: var(--space-3)
-    color: var(--text-muted)
+    color: var(--border-soft)
 
 .post-article-title
   font-family: var(--font-display)
   font-size: var(--text-4xl)
-  font-weight: 700
+  font-weight: 600
   letter-spacing: -0.02em
-  line-height: 1.2
-  margin: 0 0 var(--space-5)
+  line-height: 1.15
+  margin: 0 0 var(--space-6)
   color: var(--text-primary)
 
 .post-article-author
   display: flex
   align-items: center
-  gap: var(--space-2)
+  gap: var(--space-3)
   font-size: var(--text-sm)
   color: var(--text-secondary)
+  font-weight: 500
 
 .post-article-author-img
-  width: 28px
-  height: 28px
+  width: 32px
+  height: 32px
   border-radius: 50%
   object-fit: cover
+  border: 2px solid var(--border-soft)
 
 // ===== POST HERO IMAGE =====
 
 .post-article-hero
   margin: 0 0 var(--space-7)
-  border-radius: var(--radius-md)
+  border-radius: var(--radius-lg)
   overflow: hidden
+  box-shadow: var(--shadow-md)
   img
     width: 100%
     display: block
@@ -407,18 +449,18 @@ img
     font-family: var(--font-display)
     color: var(--text-primary)
     letter-spacing: -0.01em
-    font-weight: 700
+    font-weight: 600
     line-height: 1.3
 
   h1, h2
     font-size: var(--text-2xl)
-    margin: var(--space-8) 0 var(--space-4)
+    margin: var(--space-8) 0 var(--space-5)
     padding-bottom: var(--space-3)
     border-bottom: 1px solid var(--border-soft)
 
   h3
     font-size: var(--text-xl)
-    margin: var(--space-7) 0 var(--space-3)
+    margin: var(--space-7) 0 var(--space-4)
 
   h4, h5, h6
     font-size: var(--text-lg)
@@ -426,24 +468,24 @@ img
 
   p
     font-size: var(--text-base)
-    line-height: 1.8
+    line-height: 1.85
     margin: 0 0 var(--space-5)
     word-break: keep-all
     overflow-wrap: break-word
 
   a
-    color: var(--slate-teal)
+    color: var(--primary)
     text-decoration: underline
     text-decoration-color: var(--border-soft)
     text-underline-offset: 3px
     transition: text-decoration-color 0.2s ease
     &:hover
-      text-decoration-color: var(--slate-teal)
+      text-decoration-color: var(--primary)
 
   img
     max-width: 100%
     margin: var(--space-6) auto
-    border-radius: var(--radius-md)
+    border-radius: var(--radius-lg)
     display: block
 
   figure
@@ -454,20 +496,21 @@ img
     font-size: var(--text-sm)
     color: var(--text-muted)
     text-align: center
-    margin-top: var(--space-2)
+    margin-top: var(--space-3)
 
   hr
     border: 0
     width: 48px
-    margin: var(--space-7) auto
+    margin: var(--space-8) auto
     border-top: 2px solid var(--border-soft)
 
   blockquote
-    margin: var(--space-5) 0
-    padding: var(--space-4) var(--space-5)
-    border-left: 3px solid var(--slate-teal)
+    margin: var(--space-6) 0
+    padding: var(--space-5) var(--space-6)
+    border-left: 3px solid var(--primary)
     background-color: var(--surface)
-    border-radius: 0 var(--radius-sm) var(--radius-sm) 0
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0
+    box-shadow: var(--shadow-sm)
     p
       color: var(--text-secondary)
       margin-bottom: var(--space-2)
@@ -480,7 +523,7 @@ img
 
   li
     font-size: var(--text-base)
-    line-height: 1.8
+    line-height: 1.85
     margin-left: var(--space-6)
     margin-bottom: var(--space-2)
 
@@ -490,10 +533,12 @@ img
   table
     border-collapse: collapse
     width: 100%
-    margin: var(--space-5) 0
+    margin: var(--space-6) 0
     font-size: var(--text-sm)
-    overflow-x: auto
-    display: block
+    border-radius: var(--radius-lg)
+    overflow: hidden
+    display: table
+    box-shadow: var(--shadow-sm)
 
   th, td
     border: 1px solid var(--border-soft)
@@ -501,7 +546,7 @@ img
     text-align: left
 
   th
-    background-color: var(--surface)
+    background-color: var(--bg-base)
     font-weight: 600
 
 // ===== POST FOOTER =====
@@ -516,8 +561,9 @@ img
 
 .post-article-tag
   font-size: var(--text-xs)
-  color: var(--text-secondary)
+  color: var(--primary)
   background-color: var(--surface)
+  border: 1px solid var(--border-soft)
   padding: var(--space-1) var(--space-3)
   border-radius: var(--radius-sm)
   font-weight: 500
@@ -525,19 +571,25 @@ img
 .post-article-divider
   height: 1px
   background-color: var(--border-soft)
-  margin: var(--space-6) 0
+  margin: var(--space-7) 0
 
 .post-article-author-box
   display: flex
   align-items: center
-  gap: var(--space-4)
+  gap: var(--space-5)
+  background-color: var(--surface)
+  border: 1px solid var(--border-soft)
+  border-radius: var(--radius-lg)
+  padding: var(--space-5) var(--space-6)
+  box-shadow: var(--shadow-sm)
 
 .post-article-author-box-img
-  width: 48px
-  height: 48px
+  width: 56px
+  height: 56px
   border-radius: 50%
   object-fit: cover
   flex-shrink: 0
+  border: 2px solid var(--border-soft)
 
 .post-article-author-box strong
   display: block
@@ -548,9 +600,13 @@ img
   font-size: var(--text-sm)
   color: var(--text-secondary)
   margin: 0
+  line-height: 1.5
+
+.post-article-comments
+  margin: var(--space-7) 0
 
 .post-article-nav
-  padding-top: var(--space-6)
+  padding-top: var(--space-5)
 
 .post-article-back
   display: inline-flex
@@ -562,37 +618,39 @@ img
   text-decoration: none
   padding: var(--space-2) var(--space-4)
   border: 1px solid var(--border-soft)
-  border-radius: var(--radius-sm)
+  border-radius: var(--radius-lg)
+  background-color: var(--surface)
   transition: all 0.2s ease
   svg
     flex-shrink: 0
   &:hover
     color: var(--text-primary)
-    border-color: var(--stone-linen)
-    background-color: var(--surface)
+    box-shadow: var(--shadow-sm)
+    transform: translateY(-1px)
 
 // ===== CODE BLOCKS =====
 
 pre,
 code
-  font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', Consolas, monospace
+  font-family: var(--font-mono)
   font-size: 0.875em
 
 code
-  padding: 2px 6px
+  padding: 2px 7px
   background-color: var(--surface)
   border: 1px solid var(--border-soft)
   border-radius: var(--radius-sm)
   color: var(--text-primary)
 
 pre
-  padding: var(--space-5)
+  padding: var(--space-5) var(--space-6)
   background-color: var(--surface)
   border: 1px solid var(--border-soft)
-  border-radius: var(--radius-md)
+  border-radius: var(--radius-lg)
   overflow-x: auto
-  margin: var(--space-5) 0
-  line-height: 1.5
+  margin: var(--space-6) 0
+  line-height: 1.55
+  box-shadow: var(--shadow-sm)
   > code
     border: 0
     padding: 0
@@ -600,9 +658,6 @@ pre
     font-size: 0.875rem
 
 // ===== GISCUS =====
-
-.post-article-comments
-  margin: var(--space-6) 0
 
 @media (prefers-color-scheme: dark)
   .giscus
@@ -621,17 +676,17 @@ pre
 @keyframes fadeInUp
   from
     opacity: 0
-    transform: translateY(8px)
+    transform: translateY(12px)
   to
     opacity: 1
     transform: translateY(0)
 
 .post-item
-  animation: fadeInUp 0.4s ease both
+  animation: fadeInUp 0.45s ease both
 
 @for $i from 1 through 5
   .post-item:nth-child(#{$i})
-    animation-delay: #{($i - 1) * 0.05}s
+    animation-delay: #{($i - 1) * 0.06}s
 
 // ===== REDUCED MOTION =====
 
@@ -643,14 +698,23 @@ pre
     animation-iteration-count: 1 !important
     transition-duration: 0.01ms !important
 
+// ===== FOCUS VISIBLE =====
+
+:focus-visible
+  outline: 2px solid var(--primary)
+  outline-offset: 2px
+
 // ===== RESPONSIVE =====
 
-@media (max-width: 640px)
+@media (max-width: 768px)
   .home-header
     padding: var(--space-7) 0 var(--space-6)
 
   .home-title
     font-size: var(--text-3xl)
+
+  .post-item
+    padding: var(--space-5)
 
   .post-article-header
     padding: var(--space-6) 0 var(--space-5)
@@ -658,16 +722,22 @@ pre
   .post-article-title
     font-size: var(--text-3xl)
 
-  .site-header-inner
-    padding: 0 var(--space-4)
+  .post-article-author-box
+    padding: var(--space-4) var(--space-5)
 
-  .home
-    padding: 0 var(--space-4)
+  .post-article-content blockquote
+    padding: var(--space-4) var(--space-5)
 
-  .post-article
-    padding: 0 var(--space-4)
+@media (max-width: 480px)
+  .post-item
+    padding: var(--space-4)
+    border-radius: var(--radius-md)
 
-// ===== LEGACY COMPAT (page layout) =====
+  .pagination
+    flex-direction: column
+    gap: var(--space-3)
+
+// ===== LEGACY COMPAT =====
 
 .page-content
   min-height: calc(100vh - var(--header-height) - 120px)

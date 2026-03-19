@@ -13,18 +13,18 @@ layout: default
     <section class="post-list-section">
       <h2 class="post-list-heading">Featured</h2>
       {% for post in site.tags.featured %}
-        <article class="post-item" itemscope itemtype="http://schema.org/BlogPosting" role="article">
-          <div class="post-item-meta">
-            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
-            {% if post.categories.size > 0 %}
-              <span class="post-item-category">{{ post.categories | first }}</span>
-            {% endif %}
-          </div>
-          <h3 class="post-item-title" itemprop="name">
-            <a href="{{ post.url | prepend: site.baseurl }}" itemprop="url">{{ post.title }}</a>
-          </h3>
-          <p class="post-item-excerpt" itemprop="description">{{ post.content | strip_html | truncatewords: 30 }}</p>
-        </article>
+        <a href="{{ post.url | prepend: site.baseurl }}" class="post-item-link">
+          <article class="post-item" itemscope itemtype="http://schema.org/BlogPosting" role="article">
+            <div class="post-item-meta">
+              <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+              {% if post.categories.size > 0 %}
+                <span class="post-item-category">{{ post.categories | first }}</span>
+              {% endif %}
+            </div>
+            <h3 class="post-item-title" itemprop="name">{{ post.title }}</h3>
+            <p class="post-item-excerpt" itemprop="description">{{ post.content | strip_html | truncatewords: 30 }}</p>
+          </article>
+        </a>
       {% endfor %}
     </section>
     {% endif %}
@@ -34,18 +34,18 @@ layout: default
         <h2 class="post-list-heading">All Posts</h2>
       {% endif %}
       {% for post in paginator.posts %}
-        <article class="post-item" itemscope itemtype="http://schema.org/BlogPosting" role="article">
-          <div class="post-item-meta">
-            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
-            {% if post.categories.size > 0 %}
-              <span class="post-item-category">{{ post.categories | first }}</span>
-            {% endif %}
-          </div>
-          <h3 class="post-item-title" itemprop="name">
-            <a href="{{ post.url | prepend: site.baseurl }}" itemprop="url">{{ post.title }}</a>
-          </h3>
-          <p class="post-item-excerpt" itemprop="description">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
-        </article>
+        <a href="{{ post.url | prepend: site.baseurl }}" class="post-item-link">
+          <article class="post-item" itemscope itemtype="http://schema.org/BlogPosting" role="article">
+            <div class="post-item-meta">
+              <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+              {% if post.categories.size > 0 %}
+                <span class="post-item-category">{{ post.categories | first }}</span>
+              {% endif %}
+            </div>
+            <h3 class="post-item-title" itemprop="name">{{ post.title }}</h3>
+            <p class="post-item-excerpt" itemprop="description">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
+          </article>
+        </a>
       {% endfor %}
     </section>
 
