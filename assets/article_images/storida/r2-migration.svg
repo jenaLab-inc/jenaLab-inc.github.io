@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" fill="none">
+  <rect width="800" height="400" fill="#0f172a"/>
+  <text x="400" y="40" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="18" font-weight="bold">R2 Migration + Scheduler Modularization</text>
+  <!-- Before Storage -->
+  <rect x="40" y="65" width="200" height="60" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="1"/>
+  <text x="140" y="88" text-anchor="middle" fill="#fca5a5" font-family="monospace" font-size="11">Supabase Storage</text>
+  <text x="140" y="108" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">Egress 비용 · CDN 제한적</text>
+  <line x1="240" y1="95" x2="280" y2="95" stroke="#fbbf24" stroke-width="2" marker-end="url(#a7)"/>
+  <!-- After Storage -->
+  <rect x="280" y="65" width="200" height="60" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+  <text x="380" y="88" text-anchor="middle" fill="#6ee7b7" font-family="monospace" font-size="11">Cloudflare R2</text>
+  <text x="380" y="108" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">Egress 무료 · 글로벌 CDN</text>
+  <!-- Presigned URL flow -->
+  <rect x="520" y="65" width="240" height="60" rx="8" fill="#1e293b" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="640" y="85" text-anchor="middle" fill="#c4b5fd" font-family="monospace" font-size="10">Presigned URL Workflow</text>
+  <text x="640" y="105" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">POST /presign → PUT url → publicUrl</text>
+  <!-- R2 directories -->
+  <rect x="40" y="145" width="440" height="45" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="110" y="172" text-anchor="middle" fill="#60a5fa" font-family="monospace" font-size="10">scenes/</text>
+  <text x="250" y="172" text-anchor="middle" fill="#a78bfa" font-family="monospace" font-size="10">common/</text>
+  <text x="390" y="172" text-anchor="middle" fill="#34d399" font-family="monospace" font-size="10">characters/</text>
+  <text x="260" y="157" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="9">storage.storida.kr</text>
+  <!-- Scheduler Before -->
+  <text x="400" y="215" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="12">Scheduler Modularization</text>
+  <rect x="40" y="230" width="340" height="140" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="1"/>
+  <text x="210" y="253" text-anchor="middle" fill="#fca5a5" font-family="monospace" font-size="11" font-weight="bold">Before: index.ts (638 lines)</text>
+  <text x="210" y="278" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">DB 스키마 정의</text>
+  <text x="210" y="293" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">Lock 파일 관리</text>
+  <text x="210" y="308" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">토스페이먼츠 API</text>
+  <text x="210" y="323" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">자동 결제 · 예약 발행</text>
+  <text x="210" y="338" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">Job 복구 · Job 처리 루프</text>
+  <text x="210" y="360" text-anchor="middle" fill="#ef4444" font-family="monospace" font-size="9">모든 로직이 한 파일에</text>
+  <!-- Arrow -->
+  <line x1="380" y1="300" x2="420" y2="300" stroke="#fbbf24" stroke-width="2" marker-end="url(#a7)"/>
+  <!-- Scheduler After -->
+  <rect x="420" y="230" width="340" height="140" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+  <text x="590" y="253" text-anchor="middle" fill="#6ee7b7" font-family="monospace" font-size="11" font-weight="bold">After: ~100 lines + 8 modules</text>
+  <text x="510" y="278" text-anchor="middle" fill="#60a5fa" font-family="monospace" font-size="9">db/schema.ts</text>
+  <text x="670" y="278" text-anchor="middle" fill="#60a5fa" font-family="monospace" font-size="9">db/client.ts</text>
+  <text x="510" y="298" text-anchor="middle" fill="#a78bfa" font-family="monospace" font-size="9">toss-payments.ts</text>
+  <text x="670" y="298" text-anchor="middle" fill="#a78bfa" font-family="monospace" font-size="9">notice-publisher.ts</text>
+  <text x="510" y="318" text-anchor="middle" fill="#34d399" font-family="monospace" font-size="9">billing-processor.ts</text>
+  <text x="670" y="318" text-anchor="middle" fill="#34d399" font-family="monospace" font-size="9">job-processor.ts</text>
+  <text x="510" y="338" text-anchor="middle" fill="#fbbf24" font-family="monospace" font-size="9">job-recovery.ts</text>
+  <text x="670" y="338" text-anchor="middle" fill="#fbbf24" font-family="monospace" font-size="9">utils/lock.ts</text>
+  <text x="590" y="360" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="9">DI: db 파라미터 주입 · 동작 변경 없음</text>
+  <defs>
+    <marker id="a7" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#fbbf24"/>
+    </marker>
+  </defs>
+</svg>

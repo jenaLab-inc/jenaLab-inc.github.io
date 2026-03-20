@@ -10,7 +10,23 @@
       "Bash(find /Users/byeongmukna/Documents/project/source/jenalab-site/app/blog/[slug]/ -type f)",
       "Bash(grep -E \"\\\\.\\(png|jpg|jpeg|svg|ico\\)$\")",
       "Bash(cp /Users/byeongmukna/Documents/project/source/jenalab-site/public/jenalab_horizontal.png /Users/byeongmukna/Documents/project/source/jenaLab-inc.github.io/assets/images/jenalab_horizontal.png)",
-      "Bash(cp /Users/byeongmukna/Documents/project/source/jenalab-site/public/jenalab.ico /Users/byeongmukna/Documents/project/source/jenaLab-inc.github.io/assets/images/favicon.ico)"
+      "Bash(cp /Users/byeongmukna/Documents/project/source/jenalab-site/public/jenalab.ico /Users/byeongmukna/Documents/project/source/jenaLab-inc.github.io/assets/images/favicon.ico)",
+      "Read(//Users/sejong_jeromena/Documents/project/source/jenalab-site/**)",
+      "Read(//Users/sejong_jeromena/Documents/project/source/**)",
+      "Bash(find /Users/sejong_jeromena/Documents/project/source/jenalab-site -type f \\\\\\(-name *lang* -o -name *i18n* -o -name *translation* -o -name *locales* \\\\\\))",
+      "Bash(find /Users/sejong_jeromena/Documents/project/source/stroida/ -path */docs* -type f)",
+      "Bash(for f:*)",
+      "Bash(do basename:*)",
+      "Bash(done)",
+      "Bash(do sed:*)",
+      "Bash(find /Users/sejong_jeromena/Documents/project/source/jenaLab-inc.github.io/_posts /Users/sejong_jeromena/Documents/project/source/jenaLab-inc.github.io/_en_posts -type f -name *.markdown -o -name *.md)",
+      "Bash(ls -la /Users/sejong_jeromena/Documents/project/source/jena-note/*.md)",
+      "Bash(bundle exec:*)",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__list_pages",
+      "Bash(curl -sI http://localhost:4000/assets/article_images/storida/architecture.svg)",
+      "Bash(curl -s http://localhost:4000/assets/article_images/jenaimage/image-viewer.svg)",
+      "Bash(xmllint --noout assets/article_images/jenaimage/image-viewer.svg)"
     ]
   }
 }

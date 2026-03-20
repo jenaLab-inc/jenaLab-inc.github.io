@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" fill="none">
+  <rect width="800" height="400" fill="#0f172a"/>
+  <text x="400" y="40" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="18" font-weight="bold">JenaImage — Native macOS Image Viewer</text>
+  <!-- App window mockup -->
+  <rect x="30" y="60" width="520" height="300" rx="8" fill="#1c1c1e" stroke="#334155" stroke-width="1"/>
+  <!-- Title bar -->
+  <rect x="30" y="60" width="520" height="24" rx="8" fill="#2a2a2e"/>
+  <circle cx="46" cy="72" r="5" fill="#ff5f57"/>
+  <circle cx="62" cy="72" r="5" fill="#febc2e"/>
+  <circle cx="78" cy="72" r="5" fill="#28c840"/>
+  <text x="290" y="76" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="9">JenaImage — Photos</text>
+  <!-- Sidebar -->
+  <rect x="30" y="84" width="120" height="276" fill="#1a1a1d"/>
+  <text x="44" y="102" fill="#94a3b8" font-family="monospace" font-size="9">Folders</text>
+  <text x="44" y="120" fill="#60a5fa" font-family="monospace" font-size="9">▼ Photos</text>
+  <text x="56" y="136" fill="#e2e8f0" font-family="monospace" font-size="9">  Travel</text>
+  <text x="56" y="152" fill="#fbbf24" font-family="monospace" font-size="9">  Work</text>
+  <text x="56" y="168" fill="#e2e8f0" font-family="monospace" font-size="9">  Family</text>
+  <text x="44" y="188" fill="#60a5fa" font-family="monospace" font-size="9">▶ Downloads</text>
+  <text x="44" y="208" fill="#60a5fa" font-family="monospace" font-size="9">▶ Screenshots</text>
+  <!-- Grid area -->
+  <rect x="155" y="88" width="90" height="70" rx="4" fill="#2a2a2e" stroke="#334155" stroke-width="0.5"/>
+  <text x="200" y="128" text-anchor="middle" fill="#475569" font-family="monospace" font-size="8">IMG_001.jpg</text>
+  <rect x="250" y="88" width="90" height="70" rx="4" fill="#2a2a2e" stroke="#60a5fa" stroke-width="1.5"/>
+  <text x="295" y="128" text-anchor="middle" fill="#60a5fa" font-family="monospace" font-size="8">IMG_002.jpg</text>
+  <rect x="345" y="88" width="90" height="70" rx="4" fill="#2a2a2e" stroke="#334155" stroke-width="0.5"/>
+  <text x="390" y="128" text-anchor="middle" fill="#475569" font-family="monospace" font-size="8">IMG_003.png</text>
+  <rect x="440" y="88" width="90" height="70" rx="4" fill="#2a2a2e" stroke="#334155" stroke-width="0.5"/>
+  <text x="485" y="108" text-anchor="middle" fill="#a78bfa" font-family="monospace" font-size="7">▶ MP4</text>
+  <text x="485" y="128" text-anchor="middle" fill="#475569" font-family="monospace" font-size="8">video.mp4</text>
+  <rect x="155" y="164" width="90" height="70" rx="4" fill="#2a2a2e" stroke="#334155" stroke-width="0.5"/>
+  <rect x="250" y="164" width="90" height="70" rx="4" fill="#2a2a2e" stroke="#334155" stroke-width="0.5"/>
+  <rect x="345" y="164" width="90" height="70" rx="4" fill="#2a2a2e" stroke="#334155" stroke-width="0.5"/>
+  <rect x="440" y="164" width="90" height="70" rx="4" fill="#2a2a2e" stroke="#334155" stroke-width="0.5"/>
+  <!-- Status bar -->
+  <rect x="150" y="340" width="400" height="20" fill="#1a1a1d"/>
+  <text x="165" y="354" fill="#64748b" font-family="monospace" font-size="8">8 items · 3 folders · 5 images</text>
+  <text x="480" y="354" fill="#64748b" font-family="monospace" font-size="8">Zoom: 100%</text>
+  <!-- Architecture -->
+  <rect x="580" y="60" width="190" height="155" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="675" y="82" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="10">Architecture</text>
+  <text x="595" y="102" fill="#60a5fa" font-family="monospace" font-size="9">UI</text>
+  <text x="625" y="102" fill="#475569" font-family="monospace" font-size="8">Sidebar · Browser · Viewer</text>
+  <text x="620" y="117" fill="#475569" font-family="monospace" font-size="8">↓ delegate pattern</text>
+  <text x="595" y="135" fill="#a78bfa" font-family="monospace" font-size="9">Svc</text>
+  <text x="625" y="135" fill="#475569" font-family="monospace" font-size="8">File · Image · Cache</text>
+  <text x="620" y="150" fill="#475569" font-family="monospace" font-size="8">↓</text>
+  <text x="595" y="165" fill="#6ee7b7" font-family="monospace" font-size="9">Mdl</text>
+  <text x="625" y="165" fill="#475569" font-family="monospace" font-size="8">FolderNode · ImageFile</text>
+  <text x="675" y="185" text-anchor="middle" fill="#fbbf24" font-family="monospace" font-size="8">Swift Concurrency</text>
+  <text x="675" y="200" text-anchor="middle" fill="#475569" font-family="monospace" font-size="7">async/await · Task cancel</text>
+  <!-- Features -->
+  <rect x="580" y="230" width="190" height="130" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+  <text x="675" y="252" text-anchor="middle" fill="#6ee7b7" font-family="monospace" font-size="10" font-weight="bold">Features</text>
+  <text x="595" y="272" fill="#64748b" font-family="monospace" font-size="8">Zoom 10%–500%</text>
+  <text x="595" y="288" fill="#64748b" font-family="monospace" font-size="8">9 image formats</text>
+  <text x="595" y="304" fill="#64748b" font-family="monospace" font-size="8">Video: MP4 MOV MKV</text>
+  <text x="595" y="320" fill="#64748b" font-family="monospace" font-size="8">500MB LRU cache</text>
+  <text x="595" y="336" fill="#64748b" font-family="monospace" font-size="8">Drag-and-drop file mgmt</text>
+  <text x="595" y="352" fill="#475569" font-family="monospace" font-size="7">28 files · 0 deps · Makefile</text>
+  <!-- Formats bar -->
+  <rect x="30" y="370" width="520" height="24" rx="4" fill="#1e293b" stroke="#f59e0b" stroke-width="0.5"/>
+  <text x="290" y="386" text-anchor="middle" fill="#fbbf24" font-family="monospace" font-size="9">JPEG · PNG · WebP · HEIC · HEIF · AVIF · TIFF · BMP · GIF</text>
+</svg>

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" fill="none">
+  <rect width="800" height="400" fill="#0f172a"/>
+  <text x="400" y="40" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="18" font-weight="bold">Toss Payments Subscription Flow</text>
+  <!-- Flow steps -->
+  <rect x="40" y="70" width="130" height="60" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="105" y="95" text-anchor="middle" fill="#93c5fd" font-family="monospace" font-size="11">Web</text>
+  <text x="105" y="115" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">요금제 선택</text>
+  <line x1="170" y1="100" x2="200" y2="100" stroke="#475569" stroke-width="1.5" marker-end="url(#a3)"/>
+  <rect x="200" y="70" width="130" height="60" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="265" y="95" text-anchor="middle" fill="#fcd34d" font-family="monospace" font-size="11">Toss 결제창</text>
+  <text x="265" y="115" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">카드 등록</text>
+  <line x1="330" y1="100" x2="360" y2="100" stroke="#475569" stroke-width="1.5" marker-end="url(#a3)"/>
+  <rect x="360" y="70" width="130" height="60" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="425" y="95" text-anchor="middle" fill="#93c5fd" font-family="monospace" font-size="11">Web</text>
+  <text x="425" y="115" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">authKey 수신</text>
+  <line x1="490" y1="100" x2="520" y2="100" stroke="#475569" stroke-width="1.5" marker-end="url(#a3)"/>
+  <rect x="520" y="70" width="230" height="60" rx="8" fill="#1e293b" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="635" y="95" text-anchor="middle" fill="#c4b5fd" font-family="monospace" font-size="11">Backend confirm</text>
+  <text x="635" y="115" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">빌링키 발급 + 첫 결제 + DB 저장</text>
+  <!-- Monthly -->
+  <rect x="40" y="160" width="710" height="50" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+  <text x="400" y="185" text-anchor="middle" fill="#6ee7b7" font-family="monospace" font-size="12">Scheduler (매월) → 빌링키로 자동 갱신 결제 → 토큰 초기화</text>
+  <text x="400" y="200" text-anchor="middle" fill="#475569" font-family="monospace" font-size="9">1시간 간격 체크 · past_due 3일 초과 시 expired</text>
+  <!-- Status flow -->
+  <text x="400" y="245" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="12">Subscription Status Flow</text>
+  <rect x="80" y="265" width="120" height="40" rx="20" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+  <text x="140" y="290" text-anchor="middle" fill="#6ee7b7" font-family="monospace" font-size="11">active</text>
+  <line x1="200" y1="285" x2="270" y2="285" stroke="#475569" stroke-width="1.5" marker-end="url(#a3)"/>
+  <text x="235" y="278" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="8">결제 실패</text>
+  <rect x="270" y="265" width="120" height="40" rx="20" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="330" y="290" text-anchor="middle" fill="#fcd34d" font-family="monospace" font-size="11">past_due</text>
+  <line x1="390" y1="285" x2="460" y2="285" stroke="#475569" stroke-width="1.5" marker-end="url(#a3)"/>
+  <text x="425" y="278" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="8">3일 경과</text>
+  <rect x="460" y="265" width="120" height="40" rx="20" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="520" y="290" text-anchor="middle" fill="#fca5a5" font-family="monospace" font-size="11">expired</text>
+  <!-- Cancel flow -->
+  <line x1="140" y1="305" x2="140" y2="335" stroke="#475569" stroke-width="1.5" marker-end="url(#a3)"/>
+  <text x="160" y="325" fill="#64748b" font-family="monospace" font-size="8">해지 요청</text>
+  <rect x="80" y="335" width="120" height="40" rx="20" fill="#1e293b" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="140" y="360" text-anchor="middle" fill="#c4b5fd" font-family="monospace" font-size="11">cancelled</text>
+  <line x1="200" y1="355" x2="460" y2="355" stroke="#475569" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#a3)"/>
+  <text x="330" y="348" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="8">기간 만료까지 서비스 유지</text>
+  <rect x="460" y="335" width="120" height="40" rx="20" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="520" y="360" text-anchor="middle" fill="#fca5a5" font-family="monospace" font-size="11">expired</text>
+  <!-- Recovery -->
+  <path d="M330,265 C330,240 180,240 140,265" stroke="#10b981" stroke-width="1" stroke-dasharray="3" fill="none" marker-end="url(#a3)"/>
+  <text x="235" y="245" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="8">재시도 성공</text>
+  <defs>
+    <marker id="a3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#475569"/>
+    </marker>
+  </defs>
+</svg>

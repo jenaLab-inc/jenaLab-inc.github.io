@@ -1,17 +1,44 @@
 <!-- header start -->
 <header class="site-header">
   <div class="site-header-inner">
-    <a href="{{ site.url }}{{ site.baseurl }}/" class="site-header-logo">
+    <a href="{% if page.lang == 'en' %}{{ site.baseurl }}/en/{% else %}{{ site.url }}{{ site.baseurl }}/{% endif %}" class="site-header-logo">
       {% if site.logo %}
         <img src="{{ site.logo | prepend: site.baseurl }}" alt="{{ site.title }}" width="60">
       {% endif %}
       <span>{{ site.title }}</span>
     </a>
     <nav class="site-header-nav">
-      <a href="{{ "/about/" | prepend: site.baseurl }}">About</a>
+      {% if page.lang == "en" %}
+        <a href="{{ "/en/about/" | prepend: site.baseurl }}">About</a>
+      {% else %}
+        <a href="{{ "/about/" | prepend: site.baseurl }}">About</a>
+      {% endif %}
       <a href="{{ "/feed.xml" | prepend: site.baseurl }}" class="site-header-rss" aria-label="RSS Feed">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
       </a>
+      {% if page.lang == "en" %}
+        {% if page.ref %}
+          {% assign ko_page = site.posts | where: "ref", page.ref | first %}
+          {% if ko_page %}
+            <a href="{{ ko_page.url }}" class="site-header-lang">KO</a>
+          {% else %}
+            <a href="{{ "/" | prepend: site.baseurl }}" class="site-header-lang">KO</a>
+          {% endif %}
+        {% else %}
+          <a href="{{ "/" | prepend: site.baseurl }}" class="site-header-lang">KO</a>
+        {% endif %}
+      {% else %}
+        {% if page.ref %}
+          {% assign en_page = site.en_posts | where: "ref", page.ref | first %}
+          {% if en_page %}
+            <a href="{{ en_page.url }}" class="site-header-lang">EN</a>
+          {% else %}
+            <a href="{{ "/en/" | prepend: site.baseurl }}" class="site-header-lang">EN</a>
+          {% endif %}
+        {% else %}
+          <a href="{{ "/en/" | prepend: site.baseurl }}" class="site-header-lang">EN</a>
+        {% endif %}
+      {% endif %}
     </nav>
   </div>
 </header>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" fill="none">
+  <rect width="800" height="400" fill="#0f172a"/>
+  <text x="400" y="40" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="18" font-weight="bold">Token-Based Pricing Model</text>
+  <!-- Formula -->
+  <rect x="200" y="60" width="400" height="35" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="400" y="83" text-anchor="middle" fill="#fcd34d" font-family="monospace" font-size="12">1 Scene = ~250 Tokens (Image 180 + Text 70)</text>
+  <!-- Plans -->
+  <rect x="40" y="115" width="160" height="120" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1"/>
+  <text x="120" y="138" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="12" font-weight="bold">Start</text>
+  <text x="120" y="158" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="10">무료</text>
+  <text x="120" y="178" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="11">2,500 토큰</text>
+  <text x="120" y="198" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">3장면 고정 · ~3권</text>
+  <text x="120" y="218" text-anchor="middle" fill="#475569" font-family="monospace" font-size="9">체험용</text>
+  <rect x="220" y="115" width="160" height="120" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="300" y="138" text-anchor="middle" fill="#93c5fd" font-family="monospace" font-size="12" font-weight="bold">Basic</text>
+  <text x="300" y="158" text-anchor="middle" fill="#60a5fa" font-family="monospace" font-size="10">9,900원/월</text>
+  <text x="300" y="178" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="11">15,000 토큰</text>
+  <text x="300" y="198" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">10장면 · ~20권</text>
+  <text x="300" y="218" text-anchor="middle" fill="#475569" font-family="monospace" font-size="9">커스텀 캐릭터</text>
+  <rect x="400" y="115" width="160" height="120" rx="8" fill="#1e293b" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="480" y="138" text-anchor="middle" fill="#c4b5fd" font-family="monospace" font-size="12" font-weight="bold">Standard</text>
+  <text x="480" y="158" text-anchor="middle" fill="#a78bfa" font-family="monospace" font-size="10">19,900원/월</text>
+  <text x="480" y="178" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="11">40,000 토큰</text>
+  <text x="480" y="198" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">20장면 · ~53권</text>
+  <text x="480" y="218" text-anchor="middle" fill="#475569" font-family="monospace" font-size="9">PDF + POD</text>
+  <rect x="580" y="115" width="180" height="120" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="670" y="138" text-anchor="middle" fill="#fcd34d" font-family="monospace" font-size="12" font-weight="bold">Artist</text>
+  <text x="670" y="158" text-anchor="middle" fill="#fbbf24" font-family="monospace" font-size="10">39,900원/월</text>
+  <text x="670" y="178" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="11">120,000 토큰</text>
+  <text x="670" y="198" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">30장면 · ~160권</text>
+  <text x="670" y="218" text-anchor="middle" fill="#475569" font-family="monospace" font-size="9">커스텀 작문 스타일</text>
+  <!-- Token management -->
+  <rect x="40" y="260" width="350" height="110" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+  <text x="215" y="283" text-anchor="middle" fill="#6ee7b7" font-family="monospace" font-size="11" font-weight="bold">Token Deduction Order</text>
+  <text x="215" y="308" text-anchor="middle" fill="#fbbf24" font-family="monospace" font-size="10">1. addon_tokens (단건 구매, 영구)</text>
+  <text x="215" y="328" text-anchor="middle" fill="#60a5fa" font-family="monospace" font-size="10">2. remaining_tokens (구독, 매월 초기화)</text>
+  <text x="215" y="355" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="9">이월 없음 · 선차감 전략 · token_history 전수 기록</text>
+  <!-- token_history -->
+  <rect x="410" y="260" width="350" height="110" rx="8" fill="#1e293b" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="585" y="283" text-anchor="middle" fill="#c4b5fd" font-family="monospace" font-size="11" font-weight="bold">token_history (Audit Log)</text>
+  <text x="585" y="308" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="10">subscription_reset · subscription_signup</text>
+  <text x="585" y="328" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="10">addon_purchase · book_generation</text>
+  <text x="585" y="348" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="10">admin_adjustment</text>
+  <text x="585" y="365" text-anchor="middle" fill="#475569" font-family="monospace" font-size="9">balance_after 스냅샷으로 불일치 감지</text>
+  <defs>
+    <marker id="a6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="#475569"/>
+    </marker>
+  </defs>
+</svg>

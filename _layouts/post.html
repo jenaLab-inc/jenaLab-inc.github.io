@@ -70,7 +70,7 @@ layout: default
           s.setAttribute('data-emit-metadata', '0');
           s.setAttribute('data-input-position', 'bottom');
           s.setAttribute('data-theme', theme);
-          s.setAttribute('data-lang', 'ko');
+          s.setAttribute('data-lang', '{{ page.lang | default: "ko" }}');
           s.setAttribute('crossorigin', 'anonymous');
           s.async = true;
           document.currentScript.parentElement.appendChild(s);
@@ -78,8 +78,54 @@ layout: default
       </script>
     </div>
 
+    {% if page.lang == 'en' %}
+      {% assign sorted_posts = site.en_posts | sort: "date" %}
+      {% assign prev_post = nil %}
+      {% assign next_post = nil %}
+      {% for p in sorted_posts %}
+        {% if p.url == page.url %}
+          {% if forloop.index0 > 0 %}
+            {% assign prev_idx = forloop.index0 | minus: 1 %}
+            {% assign prev_post = sorted_posts[prev_idx] %}
+          {% endif %}
+          {% assign next_idx = forloop.index0 | plus: 1 %}
+          {% if next_idx < sorted_posts.size %}
+            {% assign next_post = sorted_posts[next_idx] %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      {% assign prev_post = page.previous %}
+      {% assign next_post = page.next %}
+    {% endif %}
+
+    <nav class="post-article-prevnext">
+      {% if prev_post %}
+        <a href="{{ prev_post.url | prepend: site.baseurl }}" class="post-article-prevnext-item post-article-prevnext-prev">
+          <span class="post-article-prevnext-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Prev
+          </span>
+          <span class="post-article-prevnext-title">{{ prev_post.title }}</span>
+        </a>
+      {% else %}
+        <span></span>
+      {% endif %}
+      {% if next_post %}
+        <a href="{{ next_post.url | prepend: site.baseurl }}" class="post-article-prevnext-item post-article-prevnext-next">
+          <span class="post-article-prevnext-label">
+            Next
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+          <span class="post-article-prevnext-title">{{ next_post.title }}</span>
+        </a>
+      {% else %}
+        <span></span>
+      {% endif %}
+    </nav>
+
     <nav class="post-article-nav">
-      <a href="{{ "/" | prepend: site.baseurl }}" class="post-article-back">
+      <a href="{% if page.lang == 'en' %}{{ "/en/" | prepend: site.baseurl }}{% else %}{{ "/" | prepend: site.baseurl }}{% endif %}" class="post-article-back">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         All posts
       </a>

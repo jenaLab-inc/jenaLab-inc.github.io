@@ -1,0 +1,40 @@
+---
+layout: default
+title: "JenaLab Technical Blog"
+lang: en
+permalink: /en/
+---
+
+<div class="home">
+  <div class="home-header">
+    <h1 class="home-title">{{ site.title }}</h1>
+    <p class="home-description">{{ site.description }}</p>
+  </div>
+
+  <main class="post-list" role="main">
+    <section class="post-list-section">
+      {% assign en_posts = site.en_posts | sort: "date" | reverse %}
+      {% for post in en_posts %}
+        <a href="{{ post.url | prepend: site.baseurl }}" class="post-item-link">
+          <article class="post-item" itemscope itemtype="http://schema.org/BlogPosting" role="article">
+            {% if post.image %}
+              <div class="post-item-thumb">
+                <img src="{{ post.image | prepend: site.baseurl }}" alt="" loading="lazy" width="80" height="80">
+              </div>
+            {% endif %}
+            <div class="post-item-body">
+              <div class="post-item-meta">
+                <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+                {% if post.categories.size > 0 %}
+                  <span class="post-item-category">{{ post.categories | first }}</span>
+                {% endif %}
+              </div>
+              <h3 class="post-item-title" itemprop="name">{{ post.title }}</h3>
+              <p class="post-item-excerpt" itemprop="description">{{ post.content | strip_html | truncatewords: 30 }}</p>
+            </div>
+          </article>
+        </a>
+      {% endfor %}
+    </section>
+  </main>
+</div>
