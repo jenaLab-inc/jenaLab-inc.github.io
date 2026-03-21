@@ -16,7 +16,11 @@
       "Bash(git push origin master --force)",
       "Bash(git stash drop)",
       "Bash(git push origin eaefd5b:master --force)",
-      "Bash(git fsck --full)"
+      "Bash(git fsck --full)",
+      "WebSearch",
+      "Bash(npm init -y)",
+      "Bash(npm install)",
+      "Bash(bundle exec:*)"
     ]
   }
 }

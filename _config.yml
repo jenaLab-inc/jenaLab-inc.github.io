@@ -25,7 +25,10 @@ defaults:
 # Site settings
 title: JenaLab Technical Blog
 description: "AI SaaS, macOS 네이티브 앱, 시스템 아키텍처에 대한 기술 블로그. Storida, jenaMemory, JenaNote, JenaImage 프로젝트의 설계와 구현을 다룹니다."
-description_en: "Technical blog on AI SaaS, native macOS apps, and system architecture. Covers design and implementation of Storida, jenaMemory, JenaNote, and JenaImage."
+
+i18n:
+  en:
+    description: "Technical blog on AI SaaS, native macOS apps, and system architecture. Covers design and implementation of Storida, jenaMemory, JenaNote, and JenaImage."
 
 email: jenalab@jenalab.com
 #blog logo
