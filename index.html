@@ -56,31 +56,46 @@ layout: default
       {% endfor %}
     </section>
 
+    {% if paginator.total_pages > 1 %}
     <nav class="pagination" role="navigation">
-      {% if paginator.next_page %}
-        <a class="pagination-link" href="{{ "/page" | prepend: site.baseurl | append: paginator.next_page }}">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-          Older
-        </a>
-      {% else %}
-        <span></span>
-      {% endif %}
-      <span class="pagination-info">{{ paginator.page }} / {{ paginator.total_pages }}</span>
       {% if paginator.previous_page %}
         {% if paginator.page == 2 %}
-          <a class="pagination-link" href="{{ "/" | prepend: site.baseurl }}">
-            Newer
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <a class="pagination-link" href="{{ "/" | prepend: site.baseurl }}" aria-label="Previous page">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           </a>
         {% else %}
-          <a class="pagination-link" href="{{ "/page" | prepend: site.baseurl | append: paginator.previous_page }}">
-            Newer
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <a class="pagination-link" href="{{ "/page" | prepend: site.baseurl | append: paginator.previous_page }}" aria-label="Previous page">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           </a>
         {% endif %}
       {% else %}
-        <span></span>
+        <span class="pagination-link pagination-disabled">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </span>
+      {% endif %}
+
+      <div class="pagination-pages">
+        {% for page_num in (1..paginator.total_pages) %}
+          {% if page_num == paginator.page %}
+            <span class="pagination-page pagination-current">{{ page_num }}</span>
+          {% elsif page_num == 1 %}
+            <a class="pagination-page" href="{{ "/" | prepend: site.baseurl }}">{{ page_num }}</a>
+          {% else %}
+            <a class="pagination-page" href="{{ "/page" | prepend: site.baseurl | append: page_num }}">{{ page_num }}</a>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      {% if paginator.next_page %}
+        <a class="pagination-link" href="{{ "/page" | prepend: site.baseurl | append: paginator.next_page }}" aria-label="Next page">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      {% else %}
+        <span class="pagination-link pagination-disabled">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
       {% endif %}
     </nav>
+    {% endif %}
   </main>
 </div>
