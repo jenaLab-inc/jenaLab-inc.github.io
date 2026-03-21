@@ -20,7 +20,8 @@
       "WebSearch",
       "Bash(npm init -y)",
       "Bash(npm install)",
-      "Bash(bundle exec:*)"
+      "Bash(bundle exec:*)",
+      "Bash(xmllint --noout assets/article_images/storida-ux/creation-ux.svg)"
     ]
   }
 }

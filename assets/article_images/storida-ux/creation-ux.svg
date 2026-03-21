@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" fill="none">
+  <rect width="800" height="400" fill="#0f172a"/>
+  <text x="400" y="35" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="16" font-weight="bold">Creation Page UX: Before → After</text>
+  <!-- BEFORE -->
+  <rect x="30" y="55" width="350" height="310" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="205" y="78" text-anchor="middle" fill="#fca5a5" font-family="monospace" font-size="12" font-weight="bold">Before: 9 Settings (Flat)</text>
+  <!-- 9 items same weight -->
+  <rect x="50" y="92" width="310" height="22" rx="4" fill="#2a2a3e" stroke="#475569" stroke-width="0.5"/>
+  <text x="60" y="107" fill="#94a3b8" font-family="monospace" font-size="9">1. Writing Style ▾</text>
+  <rect x="50" y="118" width="310" height="22" rx="4" fill="#2a2a3e" stroke="#475569" stroke-width="0.5"/>
+  <text x="60" y="133" fill="#94a3b8" font-family="monospace" font-size="9">2. Art Style ▾</text>
+  <rect x="50" y="144" width="310" height="22" rx="4" fill="#2a2a3e" stroke="#475569" stroke-width="0.5"/>
+  <text x="60" y="159" fill="#94a3b8" font-family="monospace" font-size="9">3. Character [___] [___] [___]</text>
+  <rect x="50" y="170" width="310" height="22" rx="4" fill="#2a2a3e" stroke="#475569" stroke-width="0.5"/>
+  <text x="60" y="185" fill="#94a3b8" font-family="monospace" font-size="9">4. Content Type: Fairy Tale / General</text>
+  <rect x="50" y="196" width="310" height="22" rx="4" fill="#2a2a3e" stroke="#475569" stroke-width="0.5"/>
+  <text x="60" y="211" fill="#94a3b8" font-family="monospace" font-size="9">5. Image Size: 16:9 / 3:2 / 9:16 / 1:1</text>
+  <rect x="50" y="222" width="310" height="22" rx="4" fill="#2a2a3e" stroke="#475569" stroke-width="0.5"/>
+  <text x="60" y="237" fill="#94a3b8" font-family="monospace" font-size="9">6. Image Mode: Spread / Illustration</text>
+  <rect x="50" y="248" width="310" height="22" rx="4" fill="#2a2a3e" stroke="#475569" stroke-width="0.5"/>
+  <text x="60" y="263" fill="#94a3b8" font-family="monospace" font-size="9">7. Scene Count: [___]</text>
+  <rect x="50" y="274" width="310" height="22" rx="4" fill="#2a2a3e" stroke="#475569" stroke-width="0.5"/>
+  <text x="60" y="289" fill="#94a3b8" font-family="monospace" font-size="9">8. Chars Per Scene: [___]</text>
+  <rect x="50" y="300" width="310" height="30" rx="4" fill="#2a2a3e" stroke="#475569" stroke-width="0.5"/>
+  <text x="60" y="319" fill="#94a3b8" font-family="monospace" font-size="9">9. Story Prompt...</text>
+  <text x="205" y="352" text-anchor="middle" fill="#ef4444" font-family="monospace" font-size="9">No hierarchy. Decision fatigue.</text>
+  <!-- Arrow -->
+  <text x="400" y="210" text-anchor="middle" fill="#fbbf24" font-family="monospace" font-size="22">→</text>
+  <!-- AFTER -->
+  <rect x="420" y="55" width="350" height="310" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
+  <text x="595" y="78" text-anchor="middle" fill="#6ee7b7" font-family="monospace" font-size="12" font-weight="bold">After: 3 + Summary Bar</text>
+  <!-- Core styles -->
+  <rect x="440" y="92" width="148" height="26" rx="4" fill="#2a2a3e" stroke="#60a5fa" stroke-width="1"/>
+  <text x="450" y="110" fill="#60a5fa" font-family="monospace" font-size="9">Writing Style ▾</text>
+  <rect x="598" y="92" width="148" height="26" rx="4" fill="#2a2a3e" stroke="#60a5fa" stroke-width="1"/>
+  <text x="608" y="110" fill="#60a5fa" font-family="monospace" font-size="9">Art Style ▾</text>
+  <!-- Prompt -->
+  <rect x="440" y="126" width="310" height="60" rx="4" fill="#2a2a3e" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="455" y="148" fill="#64748b" font-family="monospace" font-size="10">Tell us your story...</text>
+  <text x="455" y="175" fill="#94a3b8" font-family="monospace" font-size="9">Scenes: [3 ▾]   + Add character</text>
+  <!-- Summary bar -->
+  <rect x="440" y="198" width="310" height="24" rx="4" fill="#334155" stroke="#475569" stroke-width="0.5"/>
+  <text x="455" y="214" fill="#94a3b8" font-family="monospace" font-size="8">16:9 spread · 100 chars/scene</text>
+  <text x="720" y="214" fill="#64748b" font-family="monospace" font-size="8">Edit ▾</text>
+  <!-- Generate -->
+  <rect x="440" y="234" width="190" height="34" rx="6" fill="#3A8B66"/>
+  <text x="535" y="256" text-anchor="middle" fill="#ffffff" font-family="monospace" font-size="11" font-weight="bold">Generate</text>
+  <text x="660" y="256" fill="#6ee7b7" font-family="monospace" font-size="10">~750 tokens</text>
+  <!-- Hierarchy labels -->
+  <text x="440" y="290" fill="#60a5fa" font-family="monospace" font-size="8">Core (always visible)</text>
+  <rect x="440" y="295" width="60" height="3" rx="1" fill="#60a5fa"/>
+  <text x="540" y="290" fill="#a78bfa" font-family="monospace" font-size="8">Supporting</text>
+  <rect x="540" y="295" width="50" height="3" rx="1" fill="#a78bfa"/>
+  <text x="630" y="290" fill="#475569" font-family="monospace" font-size="8">Collapsed</text>
+  <rect x="630" y="295" width="50" height="3" rx="1" fill="#475569"/>
+  <!-- Key insight -->
+  <rect x="440" y="310" width="310" height="40" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1"/>
+  <text x="595" y="330" text-anchor="middle" fill="#fcd34d" font-family="monospace" font-size="9" font-weight="bold">Not fewer settings. Layered settings.</text>
+  <text x="595" y="344" text-anchor="middle" fill="#64748b" font-family="monospace" font-size="8">Token cost visible. Defaults smart. Hierarchy clear.</text>
+</svg>

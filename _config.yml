@@ -1,3 +1,6 @@
+future: true
+timezone: Asia/Seoul
+
 # Build settings
 plugins:
   - jemoji
