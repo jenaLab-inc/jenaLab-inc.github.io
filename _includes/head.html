@@ -4,7 +4,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
   <title>{% if page.title %}{{ page.title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
-  <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 200 }}{% else %}{{ site.description }}{% endif %}" />
+  <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 200 }}{% elsif page.lang == 'en' %}{{ site.description_en }}{% else %}{{ site.description }}{% endif %}" />
+  {% if page.categories %}<meta name="keywords" content="{{ page.categories | join: ', ' }}, JenaLab, technical blog" />{% endif %}
+  <meta name="author" content="{{ site.author }}" />
 
   <meta name="HandheldFriendly" content="True" />
   <meta name="MobileOptimized" content="320" />
@@ -12,32 +14,102 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#FAFAFA">
 
-  {% if site.twitter_handle %}
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="{{ site.twitter_handle }}" />
-    <meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}" />
-    <meta name="twitter:image" content="{{ site.logo | prepend: site.baseurl | prepend: site.url }}" />
-    {% if page.excerpt %}
-    <meta name="twitter:description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 200 }}" />
-    {% elsif site.description %}
-    <meta name="twitter:description" content="{{ site.description | strip_html | strip_newlines | truncate: 200 }}" />
-    {% endif %}
-  {% endif %}
-
+  <!-- Open Graph -->
   <meta property="og:site_name" content="{{ site.title }}" />
   <meta property="og:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}"/>
-  {% if page.excerpt %}
-  <meta property="og:description" content="{{ page.excerpt | strip_html | strip_newlines | truncate: 200 }}" />
-  {% elsif site.description %}
-  <meta property="og:description" content="{{ site.description | strip_html | strip_newlines | truncate: 200 }}" />
-  {% endif %}
+  <meta property="og:description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 200 }}{% elsif page.lang == 'en' %}{{ site.description_en }}{% else %}{{ site.description }}{% endif %}" />
   <meta property="og:image" content="{% if page.image %}{{ page.image | prepend: site.baseurl | prepend: site.url }}{% else %}{{ site.logo | prepend: site.baseurl | prepend: site.url }}{% endif %}" />
-  <meta property="og:url" content="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}" >
-  <meta property="og:type" content="blog" />
-  {% if page.date %}<meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">{% endif %}
+  <meta property="og:url" content="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}" />
+  <meta property="og:locale" content="{% if page.lang == 'en' %}en_US{% else %}ko_KR{% endif %}" />
+  {% if page.date %}
+    <meta property="og:type" content="article" />
+    <meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}" />
+    <meta property="article:author" content="{{ site.author }}" />
+    {% for cat in page.categories %}<meta property="article:section" content="{{ cat }}" />{% endfor %}
+  {% else %}
+    <meta property="og:type" content="website" />
+  {% endif %}
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}" />
+  <meta name="twitter:description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 200 }}{% elsif page.lang == 'en' %}{{ site.description_en }}{% else %}{{ site.description }}{% endif %}" />
+  <meta name="twitter:image" content="{% if page.image %}{{ page.image | prepend: site.baseurl | prepend: site.url }}{% else %}{{ site.logo | prepend: site.baseurl | prepend: site.url }}{% endif %}" />
+
+  <!-- hreflang: 한국어 ↔ 영문 교차 링크 -->
+  {% if page.ref %}
+    {% assign ko_match = site.posts | where: "ref", page.ref | first %}
+    {% assign en_match = site.en_posts | where: "ref", page.ref | first %}
+    {% if ko_match %}<link rel="alternate" hreflang="ko" href="{{ ko_match.url | prepend: site.baseurl | prepend: site.url }}" />{% endif %}
+    {% if en_match %}<link rel="alternate" hreflang="en" href="{{ en_match.url | prepend: site.baseurl | prepend: site.url }}" />{% endif %}
+    {% if ko_match %}<link rel="alternate" hreflang="x-default" href="{{ ko_match.url | prepend: site.baseurl | prepend: site.url }}" />{% endif %}
+  {% elsif page.url == "/" %}
+    <link rel="alternate" hreflang="ko" href="{{ site.url }}{{ site.baseurl }}/" />
+    <link rel="alternate" hreflang="en" href="{{ site.url }}{{ site.baseurl }}/en/" />
+    <link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ site.baseurl }}/" />
+  {% elsif page.url == "/en/" %}
+    <link rel="alternate" hreflang="ko" href="{{ site.url }}{{ site.baseurl }}/" />
+    <link rel="alternate" hreflang="en" href="{{ site.url }}{{ site.baseurl }}/en/" />
+    <link rel="alternate" hreflang="x-default" href="{{ site.url }}{{ site.baseurl }}/" />
+  {% endif %}
 
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}"/>
   <link rel="icon" href="{{ "/assets/images/favicon.ico" | prepend: site.baseurl }}" type="image/x-icon"/>
+  <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ "/feed.xml" | prepend: site.baseurl | prepend: site.url }}" />
+
+  <!-- JSON-LD Structured Data -->
+  {% if page.date %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": {{ page.title | jsonify }},
+    "description": {% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 200 | jsonify }}{% else %}{{ site.description | jsonify }}{% endif %},
+    "image": "{% if page.image %}{{ page.image | prepend: site.baseurl | prepend: site.url }}{% else %}{{ site.logo | prepend: site.baseurl | prepend: site.url }}{% endif %}",
+    "datePublished": "{{ page.date | date_to_xmlschema }}",
+    "author": {
+      "@type": "Person",
+      "name": "{{ site.author }}"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "JenaLab",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "{{ site.logo | prepend: site.baseurl | prepend: site.url }}"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}"
+    },
+    "inLanguage": "{{ page.lang | default: 'ko' }}"{% if page.ref %},
+    "translationOfWork": {
+      "@type": "TechArticle"{% assign alt_lang = page.lang | default: 'ko' %}{% if alt_lang == 'ko' %}{% assign alt_match = site.en_posts | where: "ref", page.ref | first %}{% else %}{% assign alt_match = site.posts | where: "ref", page.ref | first %}{% endif %}{% if alt_match %},
+      "url": "{{ alt_match.url | prepend: site.baseurl | prepend: site.url }}"{% endif %}
+    }{% endif %}
+  }
+  </script>
+  {% else %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": {{ site.title | jsonify }},
+    "description": {% if page.lang == 'en' %}{{ site.description_en | jsonify }}{% else %}{{ site.description | jsonify }}{% endif %},
+    "url": "{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}",
+    "publisher": {
+      "@type": "Organization",
+      "name": "JenaLab",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "{{ site.logo | prepend: site.baseurl | prepend: site.url }}"
+      }
+    },
+    "inLanguage": "{{ page.lang | default: 'ko' }}"
+  }
+  </script>
+  {% endif %}
 
   <!-- Fonts: Playfair Display (display) + Inter (body EN) + Pretendard (body KR) -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
