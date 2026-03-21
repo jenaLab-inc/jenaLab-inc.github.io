@@ -91,7 +91,7 @@ The solution is not fewer settings. It is layered settings. What changes every t
 
 ---
 
-<details>
+<details markdown="1">
 <summary>Full Socratic Dialogue (5 Rounds)</summary>
 
 **Agents**: Questioner, Defender, Reframer — 5 Rounds

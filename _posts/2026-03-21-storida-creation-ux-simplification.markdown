@@ -91,7 +91,7 @@ AI 동화 생성 페이지에 설정 항목이 9개 있었다. 작문 스타일,
 
 ---
 
-<details>
+<details markdown="1">
 <summary>토론 전문 보기 (Socratic Dialogue 5 Rounds)</summary>
 
 **Agents**: Questioner, Defender, Reframer — 5 Rounds
