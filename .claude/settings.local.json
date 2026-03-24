@@ -24,7 +24,13 @@
       "Bash(xmllint --noout assets/article_images/storida-ux/creation-ux.svg)",
       "Bash(mkdir -p /Users/sejong_jeromena/Documents/project/source/jenaLab-inc.github.io/assets/article_images/storida-pivot)",
       "Bash(mkdir -p /Users/sejong_jeromena/Documents/project/source/jenaLab-inc.github.io/assets/article_images/storida-strategy)",
-      "Bash(find _site -name *pivot* -o -name *success-strategy* -o -name *strategic-direction*)"
+      "Bash(find _site -name *pivot* -o -name *success-strategy* -o -name *strategic-direction*)",
+      "Bash(grep -rl 'viewBox=.*fill=\"\"none\"\"' /Users/byeongmukna/Documents/project/source/jenaLab-inc.github.io/assets/article_images/**/*.svg)",
+      "Bash(while read f)",
+      "Bash(do head -1 \"$f\")",
+      "Bash(echo \"$f\")",
+      "Bash(done)",
+      "Bash(xmllint --noout /Users/byeongmukna/Documents/project/source/jenaLab-inc.github.io/assets/article_images/storida-strategy/share-pipeline.svg)"
     ]
   }
 }

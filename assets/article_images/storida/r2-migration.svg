@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400" fill="none">
   <rect width="800" height="400" fill="#0f172a"/>
   <text x="400" y="40" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="18" font-weight="bold">R2 Migration + Scheduler Modularization</text>
   <!-- Before Storage -->
