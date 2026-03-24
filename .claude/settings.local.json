@@ -30,7 +30,8 @@
       "Bash(do head -1 \"$f\")",
       "Bash(echo \"$f\")",
       "Bash(done)",
-      "Bash(xmllint --noout /Users/byeongmukna/Documents/project/source/jenaLab-inc.github.io/assets/article_images/storida-strategy/share-pipeline.svg)"
+      "Bash(xmllint --noout /Users/byeongmukna/Documents/project/source/jenaLab-inc.github.io/assets/article_images/storida-strategy/share-pipeline.svg)",
+      "Bash(magick identify /Users/byeongmukna/Documents/project/source/jenaLab-inc.github.io/assets/article_images/storida-strategy/share-pipeline.png)"
     ]
   }
 }
