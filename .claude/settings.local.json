@@ -21,7 +21,10 @@
       "Bash(npm init -y)",
       "Bash(npm install)",
       "Bash(bundle exec:*)",
-      "Bash(xmllint --noout assets/article_images/storida-ux/creation-ux.svg)"
+      "Bash(xmllint --noout assets/article_images/storida-ux/creation-ux.svg)",
+      "Bash(mkdir -p /Users/sejong_jeromena/Documents/project/source/jenaLab-inc.github.io/assets/article_images/storida-pivot)",
+      "Bash(mkdir -p /Users/sejong_jeromena/Documents/project/source/jenaLab-inc.github.io/assets/article_images/storida-strategy)",
+      "Bash(find _site -name *pivot* -o -name *success-strategy* -o -name *strategic-direction*)"
     ]
   }
 }

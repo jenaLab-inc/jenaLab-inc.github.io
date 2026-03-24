@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" fill="none">
+  <rect width="800" height="400" fill="#0f172a"/>
+  <text x="400" y="32" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="16" font-weight="bold">Storida Strategy — 0 Users to Growth Engine</text>
+
+  <!-- Revenue Funnel -->
+  <rect x="30" y="52" width="235" height="170" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+  <text x="147" y="74" text-anchor="middle" fill="#6ee7b7" font-family="monospace" font-size="11" font-weight="bold">Revenue Funnel</text>
+  <rect x="65" y="88" width="165" height="28" rx="4" fill="#064e3b" stroke="#10b981" stroke-width="0.5"/>
+  <text x="147" y="106" text-anchor="middle" fill="#6ee7b7" font-family="monospace" font-size="9">Free: 1st story + share</text>
+  <rect x="50" y="124" width="195" height="28" rx="4" fill="#1e3a5f" stroke="#60a5fa" stroke-width="0.5"/>
+  <text x="147" y="142" text-anchor="middle" fill="#60a5fa" font-family="monospace" font-size="9">Per-story: ₩3,900~5,900</text>
+  <rect x="40" y="160" width="215" height="28" rx="4" fill="#3b1764" stroke="#a78bfa" stroke-width="0.5"/>
+  <text x="147" y="178" text-anchor="middle" fill="#a78bfa" font-family="monospace" font-size="9">Photobook POD: ₩15K~35K</text>
+  <text x="147" y="210" text-anchor="middle" fill="#475569" font-family="monospace" font-size="7">BEP: 100 paid/mo × ₩5K = ₩500K</text>
+
+  <!-- Target Segments -->
+  <rect x="285" y="52" width="235" height="170" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1"/>
+  <text x="402" y="74" text-anchor="middle" fill="#fbbf24" font-family="monospace" font-size="11" font-weight="bold">Target Segments</text>
+  <text x="300" y="96" fill="#fbbf24" font-family="monospace" font-size="9">Phase 1</text>
+  <text x="355" y="96" fill="#94a3b8" font-family="monospace" font-size="8">Working parents (guilt)</text>
+  <text x="300" y="118" fill="#a78bfa" font-family="monospace" font-size="9">Phase 3</text>
+  <text x="355" y="118" fill="#94a3b8" font-family="monospace" font-size="8">Overseas Korean parents</text>
+  <text x="300" y="140" fill="#64748b" font-family="monospace" font-size="9">Phase 3</text>
+  <text x="355" y="140" fill="#94a3b8" font-family="monospace" font-size="8">B2B educators</text>
+  <rect x="295" y="158" width="215" height="28" rx="4" fill="#422006" stroke="#f59e0b" stroke-width="0.5"/>
+  <text x="402" y="176" text-anchor="middle" fill="#fbbf24" font-family="monospace" font-size="8">Killer: Child photo → Protagonist</text>
+  <text x="402" y="210" text-anchor="middle" fill="#475569" font-family="monospace" font-size="7">Crosses all segments</text>
+
+  <!-- Moat Timeline -->
+  <rect x="540" y="52" width="235" height="170" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="1"/>
+  <text x="657" y="74" text-anchor="middle" fill="#f87171" font-family="monospace" font-size="11" font-weight="bold">Moat Strategy</text>
+  <text x="555" y="96" fill="#f87171" font-family="monospace" font-size="8">Now</text>
+  <text x="600" y="96" fill="#94a3b8" font-family="monospace" font-size="8">Category positioning</text>
+  <text x="555" y="116" fill="#fb923c" font-family="monospace" font-size="8">3mo</text>
+  <text x="600" y="116" fill="#94a3b8" font-family="monospace" font-size="8">Brand awareness (SEO)</text>
+  <text x="555" y="136" fill="#fbbf24" font-family="monospace" font-size="8">6mo</text>
+  <text x="600" y="136" fill="#94a3b8" font-family="monospace" font-size="8">Data moat (AI fine-tune)</text>
+  <text x="555" y="156" fill="#a78bfa" font-family="monospace" font-size="8">12mo</text>
+  <text x="600" y="156" fill="#94a3b8" font-family="monospace" font-size="8">Emotional moat (memories)</text>
+  <text x="555" y="176" fill="#60a5fa" font-family="monospace" font-size="8">12mo+</text>
+  <text x="600" y="176" fill="#94a3b8" font-family="monospace" font-size="8">Network effect</text>
+  <text x="657" y="210" text-anchor="middle" fill="#475569" font-family="monospace" font-size="7">"Child's story library = can't leave"</text>
+
+  <!-- 30/90/180 Day Roadmap -->
+  <rect x="30" y="240" width="745" height="145" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="402" y="262" text-anchor="middle" fill="#e2e8f0" font-family="monospace" font-size="11" font-weight="bold">Execution Roadmap</text>
+
+  <!-- 30 days -->
+  <rect x="45" y="275" width="225" height="95" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="0.5"/>
+  <text x="157" y="293" text-anchor="middle" fill="#6ee7b7" font-family="monospace" font-size="10" font-weight="bold">30 days — Survive</text>
+  <text x="55" y="310" fill="#94a3b8" font-family="monospace" font-size="7">• Child photo→protagonist MVP</text>
+  <text x="55" y="324" fill="#94a3b8" font-family="monospace" font-size="7">• Kakao share + OG preview</text>
+  <text x="55" y="338" fill="#94a3b8" font-family="monospace" font-size="7">• Mom cafe 50 users direct</text>
+  <text x="55" y="355" fill="#fbbf24" font-family="monospace" font-size="7">→ 50-100 users, reuse 30%+</text>
+
+  <!-- 90 days -->
+  <rect x="290" y="275" width="225" height="95" rx="6" fill="#0f172a" stroke="#60a5fa" stroke-width="0.5"/>
+  <text x="402" y="293" text-anchor="middle" fill="#60a5fa" font-family="monospace" font-size="10" font-weight="bold">90 days — Ignite</text>
+  <text x="300" y="310" fill="#94a3b8" font-family="monospace" font-size="7">• "Create with this style" clone</text>
+  <text x="300" y="324" fill="#94a3b8" font-family="monospace" font-size="7">• Per-story ₩3,900 payment</text>
+  <text x="300" y="338" fill="#94a3b8" font-family="monospace" font-size="7">• One-tap "Today's story"</text>
+  <text x="300" y="355" fill="#fbbf24" font-family="monospace" font-size="7">→ 1,000 users, ₩200K/mo</text>
+
+  <!-- 180 days -->
+  <rect x="535" y="275" width="225" height="95" rx="6" fill="#0f172a" stroke="#a78bfa" stroke-width="0.5"/>
+  <text x="647" y="293" text-anchor="middle" fill="#a78bfa" font-family="monospace" font-size="10" font-weight="bold">180 days — Scale</text>
+  <text x="545" y="310" fill="#94a3b8" font-family="monospace" font-size="7">• Interactive storytelling</text>
+  <text x="545" y="324" fill="#94a3b8" font-family="monospace" font-size="7">• Education books, bilingual</text>
+  <text x="545" y="338" fill="#94a3b8" font-family="monospace" font-size="7">• Creator showcase + B2B</text>
+  <text x="545" y="355" fill="#fbbf24" font-family="monospace" font-size="7">→ 10,000 users, ₩3M/mo</text>
+</svg>
